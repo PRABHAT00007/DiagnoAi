@@ -157,7 +157,7 @@ pip install -r requirements.txt
 
 Because deep learning model weights exceed GitHub's file storage limits, all pre-trained models are hosted on Google Drive:
 
-👉 **[Download DiagnoAI Pre-Trained Models (Google Drive)](INSERT_YOUR_GDRIVE_LINK_HERE)**
+👉 **[Download DiagnoAI Pre-Trained Models (Google Drive)](https://drive.google.com/drive/folders/1BMVXIETJidYOkQnlsA_rUMB7buPeCSKj?usp=drive_link)**
 
 Download and extract/place the model files directly into the `models/` directory:
 
