@@ -1,0 +1,903 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="DiagnoAI - AI-Powered Medical Screening, Computer Vision Diagnostics, and Telehealth Platform">
+    <title>{% block title %}DiagnoAI | Advanced Healthcare AI{% endblock %}</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+
+    <!-- Bootstrap 5 CSS (Grid & Utilities) -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <!-- Axios -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.25.0/axios.min.js"></script>
+
+    <!-- DiagnoAI Modern Design System -->
+    <link rel="stylesheet" href="{% static 'css/modern-theme.css' %}">
+    <link rel="stylesheet" href="{% static 'css/clinical-report.css' %}">
+
+    <script>
+        // Initialize Theme Early to Prevent Flash
+        (function() {
+            const savedTheme = localStorage.getItem('diagnoai_theme') || 'light';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+        })();
+
+        // Global Theme Toggle Function
+        window.updateThemeUI = function(theme) {
+            const themeToggleBtn = document.getElementById('diagnoThemeToggle');
+            if (themeToggleBtn) {
+                if (theme === 'dark') {
+                    themeToggleBtn.innerHTML = '<i data-lucide="sun" style="width: 18px; height: 18px; color: #fbbf24;"></i>';
+                    themeToggleBtn.setAttribute('title', 'Theme: PACS Dark Mode (Click for Light Mode)');
+                } else {
+                    themeToggleBtn.innerHTML = '<i data-lucide="moon" style="width: 18px; height: 18px; color: var(--primary-600);"></i>';
+                    themeToggleBtn.setAttribute('title', 'Theme: Clinical Light Mode (Click for Dark Mode)');
+                }
+                if (window.lucide) lucide.createIcons();
+            }
+        };
+
+        window.toggleDiagnoTheme = function() {
+            const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            document.documentElement.setAttribute('data-theme', newTheme);
+            localStorage.setItem('diagnoai_theme', newTheme);
+            window.updateThemeUI(newTheme);
+
+            if (window.DiagnoSound && DiagnoSound.toggle) {
+                DiagnoSound.toggle(newTheme === 'dark');
+            }
+            if (window.DiagnoToast) {
+                DiagnoToast.info(`Switched to ${newTheme === 'dark' ? 'PACS Dark Mode' : 'Clinical Light Mode'}`, 'Theme Updated');
+            }
+        };
+
+        // Global CSRF Token Helper
+        window.getCookie = function(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        };
+        const getCookie = window.getCookie;
+    </script>
+
+    {% block extra_head %}{% endblock %}
+</head>
+<body>
+
+    <!-- ================= MODERN NAVIGATION ================= -->
+    <header class="diagno-navbar">
+        <div class="diagno-nav-container">
+            <a href="{% url 'index' %}" class="diagno-brand">
+                <div class="diagno-brand-icon">
+                    <i data-lucide="activity" style="width: 24px; height: 24px;"></i>
+                </div>
+                <div class="diagno-brand-text">
+                    <span class="diagno-brand-title">DiagnoAI</span>
+                    <span class="diagno-brand-subtitle">Clinical Intelligence</span>
+                </div>
+            </a>
+
+            <!-- Desktop Menu -->
+            <ul class="diagno-nav-menu" id="diagnoNavMenu">
+                <li class="diagno-nav-item">
+                    <a href="{% url 'index' %}" class="diagno-nav-link">
+                        <i data-lucide="home" style="width: 16px; height: 16px;"></i>
+                        <span>Home</span>
+                    </a>
+                </li>
+
+                <!-- AI Vision Dropdown -->
+                <li class="diagno-nav-item">
+                    <a href="javascript:void(0)" class="diagno-nav-link">
+                        <i data-lucide="scan" style="width: 16px; height: 16px;"></i>
+                        <span>AI Vision</span>
+                        <i data-lucide="chevron-down" style="width: 14px; height: 14px;"></i>
+                    </a>
+                    <ul class="diagno-dropdown-menu">
+                        <li class="diagno-dropdown-item">
+                            <a href="{% url 'brain-tumor-predict' %}">
+                                <div class="diagno-dropdown-icon"><i data-lucide="brain" style="width: 18px; height: 18px;"></i></div>
+                                <div>
+                                    <strong>Brain Tumor</strong>
+                                    <div style="font-size: 0.72rem; color: var(--text-muted);">Segmentation & UNet</div>
+                                </div>
+                            </a>
+                        </li>
+                        <li class="diagno-dropdown-item">
+                            <a href="{% url 'alzheimer-predict' %}">
+                                <div class="diagno-dropdown-icon" style="background:#fdf2f8; color:#db2777;"><i data-lucide="activity" style="width: 18px; height: 18px;"></i></div>
+                                <div>
+                                    <strong>Alzheimer's MRI</strong>
+                                    <div style="font-size: 0.72rem; color: var(--text-muted);">Grad-CAM Heatmap</div>
+                                </div>
+                            </a>
+                        </li>
+                        <li class="diagno-dropdown-item">
+                            <a href="{% url 'covid-predict' %}">
+                                <div class="diagno-dropdown-icon" style="background:#ecfeff; color:#0891b2;"><i data-lucide="wind" style="width: 18px; height: 18px;"></i></div>
+                                <div>
+                                    <strong>COVID & Chest X-Ray</strong>
+                                    <div style="font-size: 0.72rem; color: var(--text-muted);">Pneumonia Detection</div>
+                                </div>
+                            </a>
+                        </li>
+                        <li class="diagno-dropdown-item">
+                            <a href="{% url 'glaucoma-predict' %}">
+                                <div class="diagno-dropdown-icon" style="background:#f0fdf4; color:#16a34a;"><i data-lucide="eye" style="width: 18px; height: 18px;"></i></div>
+                                <div>
+                                    <strong>Glaucoma Screening</strong>
+                                    <div style="font-size: 0.72rem; color: var(--text-muted);">Fundus Retina Scan</div>
+                                </div>
+                            </a>
+                        </li>
+                        <li class="diagno-dropdown-item">
+                            <a href="{% url 'malaria-predict' %}">
+                                <div class="diagno-dropdown-icon" style="background:#fff1f2; color:#e11d48;"><i data-lucide="droplet" style="width: 18px; height: 18px;"></i></div>
+                                <div>
+                                    <strong>Malaria Detection</strong>
+                                    <div style="font-size: 0.72rem; color: var(--text-muted);">Blood Cell Smear</div>
+                                </div>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+
+                <!-- Clinical Analyzers Dropdown -->
+                <li class="diagno-nav-item">
+                    <a href="javascript:void(0)" class="diagno-nav-link">
+                        <i data-lucide="clipboard-check" style="width: 16px; height: 16px;"></i>
+                        <span>Clinical Risk</span>
+                        <i data-lucide="chevron-down" style="width: 14px; height: 14px;"></i>
+                    </a>
+                    <ul class="diagno-dropdown-menu">
+                        <li class="diagno-dropdown-item">
+                            <a href="{% url 'heart-disease-view' %}">
+                                <div class="diagno-dropdown-icon" style="background:#fef2f2; color:#dc2626;"><i data-lucide="heart" style="width: 18px; height: 18px;"></i></div>
+                                <div>
+                                    <strong>Heart Disease</strong>
+                                    <div style="font-size: 0.72rem; color: var(--text-muted);">Cardiovascular Vitals</div>
+                                </div>
+                            </a>
+                        </li>
+                        <li class="diagno-dropdown-item">
+                            <a href="{% url 'diabetes-view' %}">
+                                <div class="diagno-dropdown-icon" style="background:#eff6ff; color:#2563eb;"><i data-lucide="pie-chart" style="width: 18px; height: 18px;"></i></div>
+                                <div>
+                                    <strong>Diabetes Risk</strong>
+                                    <div style="font-size: 0.72rem; color: var(--text-muted);">Glycemic Predictor</div>
+                                </div>
+                            </a>
+                        </li>
+                        <li class="diagno-dropdown-item">
+                            <a href="{% url 'cancer-view' %}">
+                                <div class="diagno-dropdown-icon" style="background:#fdf4ff; color:#c026d3;"><i data-lucide="shield-alert" style="width: 18px; height: 18px;"></i></div>
+                                <div>
+                                    <strong>Breast Cancer</strong>
+                                    <div style="font-size: 0.72rem; color: var(--text-muted);">Biopsy Risk Scoring</div>
+                                </div>
+                            </a>
+                        </li>
+                        <li class="diagno-dropdown-item">
+                            <a href="{% url 'liver-view' %}">
+                                <div class="diagno-dropdown-icon" style="background:#fffbeb; color:#d97706;"><i data-lucide="layers" style="width: 18px; height: 18px;"></i></div>
+                                <div>
+                                    <strong>Liver Function</strong>
+                                    <div style="font-size: 0.72rem; color: var(--text-muted);">Hepatic Panel</div>
+                                </div>
+                            </a>
+                        </li>
+                        <li class="diagno-dropdown-item">
+                            <a href="{% url 'bmi-calculator' %}">
+                                <div class="diagno-dropdown-icon" style="background:#f0fdfa; color:#0d9488;"><i data-lucide="scale" style="width: 18px; height: 18px;"></i></div>
+                                <div>
+                                    <strong>BMI Calculator</strong>
+                                    <div style="font-size: 0.72rem; color: var(--text-muted);">Biometric Index</div>
+                                </div>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+
+                <!-- Voice AI -->
+                <li class="diagno-nav-item">
+                    <a href="{% url 'know-your-disease' %}" class="diagno-nav-link">
+                        <i data-lucide="mic" style="width: 16px; height: 16px;"></i>
+                        <span>Voice Symptom AI</span>
+                    </a>
+                </li>
+
+                <!-- Telehealth -->
+                <li class="diagno-nav-item">
+                    <a href="{% url 'appointment' %}" class="diagno-nav-link">
+                        <i data-lucide="video" style="width: 16px; height: 16px;"></i>
+                        <span>Telehealth Consult</span>
+                    </a>
+                </li>
+            </ul>
+
+            <!-- Navigation Actions -->
+            <div class="diagno-nav-actions">
+                <button class="btn-diagno btn-diagno-outline d-none d-md-inline-flex" id="navCmdTrigger" style="padding: 0.45rem 0.85rem; font-size: 0.82rem; gap: 0.5rem;" title="Spotlight Search (Ctrl + K)">
+                    <i data-lucide="search" style="width: 15px; height: 15px; color: var(--primary-600);"></i>
+                    <span>Quick Search</span>
+                    <span class="diagno-cmd-kbd" style="font-size: 0.68rem; margin-left: 0.25rem;">Ctrl K</span>
+                </button>
+                <button class="btn-diagno btn-diagno-outline" id="diagnoThemeToggle" onclick="window.toggleDiagnoTheme()" aria-label="Toggle PACS Dark Mode" style="padding: 0.5rem; border-radius: var(--radius-full); width: 38px; height: 38px; display: inline-flex; align-items: center; justify-content: center;" title="Toggle Dark/Light Mode">
+                    <i data-lucide="moon" style="width: 18px; height: 18px; color: var(--primary-600);"></i>
+                </button>
+                <button class="btn-diagno btn-diagno-outline" id="diagnoSoundToggle" aria-label="Toggle Sound Effects" style="padding: 0.5rem; border-radius: var(--radius-full); width: 38px; height: 38px; display: inline-flex; align-items: center; justify-content: center;" title="Toggle Sound FX">
+                    <i data-lucide="volume-2" style="width: 18px; height: 18px; color: var(--primary-600);"></i>
+                </button>
+                <a href="{% url 'appointment' %}" class="btn-diagno btn-diagno-primary">
+                    <i data-lucide="calendar-plus" style="width: 16px; height: 16px;"></i>
+                    <span>Consult Doctor</span>
+                </a>
+                <button class="diagno-mobile-toggle" id="diagnoMobileToggle" aria-label="Toggle Navigation">
+                    <i data-lucide="menu" style="width: 22px; height: 22px;"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+
+    <!-- ================= MAIN CONTENT BLOCK ================= -->
+    <main class="flex-grow-1">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- ================= MODERN FOOTER ================= -->
+    <footer class="diagno-footer">
+        <div class="diagno-footer-container">
+            <div class="diagno-footer-brand">
+                <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem;">
+                    <div class="diagno-brand-icon" style="width: 36px; height: 36px;">
+                        <i data-lucide="activity" style="width: 20px; height: 20px;"></i>
+                    </div>
+                    <h4 style="margin: 0; color: white; font-weight: 800;">DiagnoAI</h4>
+                </div>
+                <p style="font-size: 0.9rem; line-height: 1.6; margin-bottom: 1.25rem;">
+                    Next-generation artificial intelligence diagnostic platform delivering deep learning computer vision, real-time clinical risk stratification, and instant telemedicine connectivity.
+                </p>
+                <div style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.82rem; color: #cbd5e1;">
+                    <span class="status-dot"></span>
+                    <span>10/10 AI Models Operational & Verified</span>
+                </div>
+            </div>
+
+            <div class="diagno-footer-col">
+                <h5>AI Vision Suites</h5>
+                <ul>
+                    <li><a href="{% url 'brain-tumor-predict' %}">Brain Tumor Localization</a></li>
+                    <li><a href="{% url 'alzheimer-predict' %}">Alzheimer's Grad-CAM</a></li>
+                    <li><a href="{% url 'covid-predict' %}">COVID & Chest X-Ray</a></li>
+                    <li><a href="{% url 'glaucoma-predict' %}">Glaucoma Eye Scan</a></li>
+                    <li><a href="{% url 'malaria-predict' %}">Malaria Smear Analysis</a></li>
+                </ul>
+            </div>
+
+            <div class="diagno-footer-col">
+                <h5>Clinical Calculators</h5>
+                <ul>
+                    <li><a href="{% url 'heart-disease-view' %}">Cardiovascular Health</a></li>
+                    <li><a href="{% url 'diabetes-view' %}">Diabetes Risk Index</a></li>
+                    <li><a href="{% url 'cancer-view' %}">Breast Cancer Biopsy</a></li>
+                    <li><a href="{% url 'liver-view' %}">Liver Function Panel</a></li>
+                    <li><a href="{% url 'bmi-calculator' %}">Interactive BMI Gauge</a></li>
+                </ul>
+            </div>
+
+            <div class="diagno-footer-col">
+                <h5>Medical Disclaimer</h5>
+                <p style="font-size: 0.8rem; line-height: 1.5; color: #94a3b8; margin-bottom: 1rem;">
+                    DiagnoAI predictive tools and visual heatmaps are engineered strictly for early screening assistance and educational analysis. They do not constitute formal medical advice or diagnosis. Always consult certified healthcare professionals for clinical decisions.
+                </p>
+                <a href="{% url 'appointment' %}" class="btn-diagno btn-diagno-outline" style="font-size: 0.82rem; padding: 0.45rem 0.9rem; background: rgba(255,255,255,0.08); color: white; border-color: rgba(255,255,255,0.15);">
+                    <i data-lucide="video" style="width: 14px; height: 14px;"></i>
+                    <span>Connect with Telehealth</span>
+                </a>
+            </div>
+        </div>
+
+        <div class="diagno-footer-bottom">
+            <div>
+                &copy; 2026 DiagnoAI Health Technologies. All rights reserved.
+            </div>
+            <div style="display: flex; gap: 1.5rem;">
+                <a href="{% url 'index' %}" style="color: #94a3b8;">Home</a>
+                <a href="{% url 'know-your-disease' %}" style="color: #94a3b8;">Voice AI</a>
+                <a href="{% url 'appointment' %}" style="color: #94a3b8;">Doctors</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- ================= GLOBAL COMMAND PALETTE (CTRL + K) ================= -->
+    <div class="diagno-cmd-backdrop" id="diagnoCmdBackdrop">
+        <div class="diagno-cmd-box">
+            <div class="diagno-cmd-header">
+                <i data-lucide="search" style="width: 20px; height: 20px; color: var(--primary-600);"></i>
+                <input type="text" class="diagno-cmd-search-input" id="diagnoCmdInput" placeholder="Type a disease, symptom, tool, or command... (e.g. Brain Tumor, Fever, Heart Risk)" autocomplete="off" spellcheck="false">
+                <button type="button" class="btn-close" id="diagnoCmdClose" aria-label="Close"></button>
+            </div>
+            <div class="diagno-cmd-results" id="diagnoCmdResults">
+                <!-- Dynamically Populated by Spotlight Engine -->
+            </div>
+            <div class="diagno-cmd-footer">
+                <div class="d-flex align-items-center gap-2">
+                    <span><span class="diagno-cmd-kbd">↑</span> <span class="diagno-cmd-kbd">↓</span> Navigate</span>
+                    <span><span class="diagno-cmd-kbd">↵</span> Select</span>
+                    <span><span class="diagno-cmd-kbd">ESC</span> Close</span>
+                </div>
+                <div><strong>DiagnoAI</strong> Spotlight 2.0</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= FLOATING QUICK DIAGNOSTIC DOCK ================= -->
+    <div class="diagno-quick-dock" id="diagnoQuickDock">
+        <div class="diagno-dock-menu" id="diagnoDockMenu">
+            <a href="{% url 'know-your-disease' %}" class="diagno-dock-btn">
+                <i data-lucide="mic" style="width: 16px; height: 16px; color: #2563eb;"></i>
+                <span>Voice Symptom AI</span>
+            </a>
+            <a href="{% url 'brain-tumor-predict' %}" class="diagno-dock-btn">
+                <i data-lucide="brain" style="width: 16px; height: 16px; color: #7c3aed;"></i>
+                <span>Brain MRI Scan</span>
+            </a>
+            <a href="{% url 'heart-disease-view' %}" class="diagno-dock-btn">
+                <i data-lucide="heart" style="width: 16px; height: 16px; color: #e11d48;"></i>
+                <span>Heart Risk Index</span>
+            </a>
+            <a href="{% url 'bmi-calculator' %}" class="diagno-dock-btn">
+                <i data-lucide="scale" style="width: 16px; height: 16px; color: #0d9488;"></i>
+                <span>BMI Calculator</span>
+            </a>
+            <a href="{% url 'appointment' %}" class="diagno-dock-btn">
+                <i data-lucide="video" style="width: 16px; height: 16px; color: #059669;"></i>
+                <span>Consult Doctor</span>
+            </a>
+        </div>
+        <button type="button" class="diagno-dock-trigger" id="diagnoDockTrigger" title="Quick Diagnostic Dock">
+            <i data-lucide="sparkles" style="width: 24px; height: 24px;"></i>
+        </button>
+    </div>
+
+    <!-- Bootstrap 5 JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+
+    <!-- DiagnoAI Global Component Scripts -->
+    <script src="{% static 'js/sound-effects.js' %}"></script>
+    <script src="{% static 'js/diagno-toast.js' %}"></script>
+    <script src="{% static 'js/image-slider.js' %}"></script>
+    <script src="{% static 'js/dropzone-upload.js' %}"></script>
+
+    <!-- Global App Initialization Scripts -->
+    <script>
+        // Initialize Lucide Icons
+        if (window.lucide) {
+            lucide.createIcons();
+        }
+
+        // Mobile Menu Toggle
+        const mobileToggle = document.getElementById('diagnoMobileToggle');
+        const navMenu = document.getElementById('diagnoNavMenu');
+        if (mobileToggle && navMenu) {
+            mobileToggle.addEventListener('click', () => {
+                navMenu.classList.toggle('mobile-open');
+            });
+        }
+
+        // Quick Dock Expansion Toggle
+        const dockTrigger = document.getElementById('diagnoDockTrigger');
+        const quickDock = document.getElementById('diagnoQuickDock');
+        if (dockTrigger && quickDock) {
+            dockTrigger.addEventListener('click', () => {
+                quickDock.classList.toggle('expanded');
+                if (window.lucide) lucide.createIcons();
+            });
+            document.addEventListener('click', (e) => {
+                if (!quickDock.contains(e.target)) {
+                    quickDock.classList.remove('expanded');
+                }
+            });
+        }
+
+        // Global Printable Clinical Report Trigger
+        window.printClinicalReport = function() {
+            window.print();
+        };
+
+        // ==========================================
+        // SPOTLIGHT COMMAND PALETTE ENGINE (CTRL + K)
+        // ==========================================
+        const SPOTLIGHT_DATABASE = [
+            // AI Vision Modalities
+            { title: "Brain Tumor Localization", category: "AI Vision (MRI)", url: "{% url 'brain-tumor-predict' %}", icon: "brain", desc: "DenseNet-201 & UNet Segmentation" },
+            { title: "Alzheimer's Disease Detection", category: "AI Vision (MRI)", url: "{% url 'alzheimer-predict' %}", icon: "activity", desc: "Grad-CAM Saliency Heatmaps" },
+            { title: "COVID-19 & Pneumonia Chest X-Ray", category: "AI Vision (X-Ray)", url: "{% url 'covid-predict' %}", icon: "wind", desc: "Pulmonary Infiltration Detection" },
+            { title: "Glaucoma Eye Screening", category: "AI Vision (Retina)", url: "{% url 'glaucoma-predict' %}", icon: "eye", desc: "Optic Disc Cup Ratio Analysis" },
+            { title: "Malaria Blood Smear Detection", category: "AI Vision (Microscopy)", url: "{% url 'malaria-predict' %}", icon: "droplet", desc: "Parasitized Cell Classifier" },
+
+            // Clinical Risk Analyzers
+            { title: "Cardiovascular Disease Risk", category: "Clinical Calculators", url: "{% url 'heart-disease-view' %}", icon: "heart", desc: "13-Feature Framingham / UCI Cardiac Panel" },
+            { title: "Diabetes Risk Stratification", category: "Clinical Calculators", url: "{% url 'diabetes-view' %}", icon: "pie-chart", desc: "Glucose & Metabolic Profile Classifier" },
+            { title: "Breast Cancer Biopsy Classifier", category: "Clinical Calculators", url: "{% url 'cancer-view' %}", icon: "shield-alert", desc: "FNA Fine-Needle Aspirate Malignancy" },
+            { title: "Liver Function Biomarker Panel", category: "Clinical Calculators", url: "{% url 'liver-view' %}", icon: "layers", desc: "Bilirubin & Hepatic Enzyme Risk" },
+            { title: "Interactive BMI & Caloric Index", category: "Clinical Calculators", url: "{% url 'bmi-calculator' %}", icon: "scale", desc: "Body Mass Index & Met-Rate" },
+
+            // Symptom & Voice AI
+            { title: "Know Your Disease (377+ Symptoms)", category: "Voice & NLP AI", url: "{% url 'know-your-disease' %}", icon: "mic", desc: "Voice Speech Triage & 57 Conditions Differential" },
+
+            // Telemedicine & Portal
+            { title: "Telehealth Video Consultation", category: "Telemedicine", url: "{% url 'appointment' %}", icon: "video", desc: "Instant Room Video Appointments" },
+            { title: "Home Dashboard", category: "Navigation", url: "{% url 'index' %}", icon: "home", desc: "Main Platform Overview" },
+            
+            // Actions
+            { title: "Toggle Dark / Light Theme", category: "Quick Actions", action: "toggleTheme", icon: "sun-moon", desc: "Switch between PACS Dark and Clinical Light" },
+            { title: "Print / Export Clinical Report", category: "Quick Actions", action: "printReport", icon: "printer", desc: "Generate Letterhead PDF Summary" }
+        ];
+
+        let cmdActiveIndex = 0;
+        let cmdFilteredItems = [];
+
+        function initCommandPalette() {
+            const backdrop = document.getElementById('diagnoCmdBackdrop');
+            const input = document.getElementById('diagnoCmdInput');
+            const results = document.getElementById('diagnoCmdResults');
+            const closeBtn = document.getElementById('diagnoCmdClose');
+            const navTrigger = document.getElementById('navCmdTrigger');
+
+            if (!backdrop || !input || !results) return;
+
+            function openPalette() {
+                backdrop.classList.add('open');
+                input.value = '';
+                filterPalette('');
+                setTimeout(() => input.focus(), 50);
+                if (window.lucide) lucide.createIcons();
+            }
+
+            function closePalette() {
+                backdrop.classList.remove('open');
+            }
+
+            function filterPalette(query) {
+                const q = query.toLowerCase().trim();
+                if (!q) {
+                    cmdFilteredItems = SPOTLIGHT_DATABASE;
+                } else {
+                    cmdFilteredItems = SPOTLIGHT_DATABASE.filter(item => 
+                        item.title.toLowerCase().includes(q) || 
+                        item.category.toLowerCase().includes(q) || 
+                        (item.desc && item.desc.toLowerCase().includes(q))
+                    );
+                }
+                cmdActiveIndex = 0;
+                renderPaletteResults();
+            }
+
+            function renderPaletteResults() {
+                results.innerHTML = '';
+                if (cmdFilteredItems.length === 0) {
+                    results.innerHTML = `
+                        <div class="text-center py-4 text-muted" style="font-size: 0.9rem;">
+                            <i data-lucide="search-x" style="width: 28px; height: 28px; display: block; margin: 0 auto 0.5rem; color: #94a3b8;"></i>
+                            No matching diagnostic tools or symptoms found.
+                        </div>
+                    `;
+                    if (window.lucide) lucide.createIcons();
+                    return;
+                }
+
+                // Group by category
+                const groups = {};
+                cmdFilteredItems.forEach(item => {
+                    if (!groups[item.category]) groups[item.category] = [];
+                    groups[item.category].push(item);
+                });
+
+                let globalIndex = 0;
+                for (const cat in groups) {
+                    const groupTitle = document.createElement('div');
+                    groupTitle.className = 'diagno-cmd-group-title';
+                    groupTitle.textContent = cat;
+                    results.appendChild(groupTitle);
+
+                    groups[cat].forEach(item => {
+                        const row = document.createElement('div');
+                        row.className = `diagno-cmd-item ${globalIndex === cmdActiveIndex ? 'active' : ''}`;
+                        row.setAttribute('data-index', globalIndex);
+                        row.innerHTML = `
+                            <div class="diagno-cmd-item-left">
+                                <div class="diagno-cmd-item-icon">
+                                    <i data-lucide="${item.icon || 'activity'}" style="width: 18px; height: 18px;"></i>
+                                </div>
+                                <div>
+                                    <div style="font-weight: 700; font-size: 0.92rem;">${item.title}</div>
+                                    <div style="font-size: 0.76rem; color: var(--text-muted);">${item.desc || ''}</div>
+                                </div>
+                            </div>
+                            <div style="font-size: 0.75rem; color: var(--text-muted);">
+                                <i data-lucide="arrow-right" style="width: 14px; height: 14px;"></i>
+                            </div>
+                        `;
+
+                        const capturedIndex = globalIndex;
+                        row.addEventListener('click', () => {
+                            executePaletteItem(item);
+                        });
+
+                        results.appendChild(row);
+                        globalIndex++;
+                    });
+                }
+                if (window.lucide) lucide.createIcons();
+            }
+
+            function executePaletteItem(item) {
+                closePalette();
+                if (item.action === 'toggleTheme') {
+                    const themeToggleBtn = document.getElementById('diagnoThemeToggle');
+                    if (themeToggleBtn) themeToggleBtn.click();
+                } else if (item.action === 'printReport') {
+                    window.printClinicalReport();
+                } else if (item.url) {
+                    window.location.href = item.url;
+                }
+            }
+
+            // Keyboard Shortcuts
+            window.addEventListener('keydown', (e) => {
+                if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
+                    e.preventDefault();
+                    if (backdrop.classList.contains('open')) {
+                        closePalette();
+                    } else {
+                        openPalette();
+                    }
+                } else if (e.key === 'Escape' && backdrop.classList.contains('open')) {
+                    closePalette();
+                } else if (backdrop.classList.contains('open')) {
+                    if (e.key === 'ArrowDown') {
+                        e.preventDefault();
+                        cmdActiveIndex = (cmdActiveIndex + 1) % Math.max(cmdFilteredItems.length, 1);
+                        renderPaletteResults();
+                    } else if (e.key === 'ArrowUp') {
+                        e.preventDefault();
+                        cmdActiveIndex = (cmdActiveIndex - 1 + cmdFilteredItems.length) % Math.max(cmdFilteredItems.length, 1);
+                        renderPaletteResults();
+                    } else if (e.key === 'Enter') {
+                        e.preventDefault();
+                        if (cmdFilteredItems[cmdActiveIndex]) {
+                            executePaletteItem(cmdFilteredItems[cmdActiveIndex]);
+                        }
+                    }
+                }
+            });
+
+            if (navTrigger) navTrigger.addEventListener('click', openPalette);
+            if (closeBtn) closeBtn.addEventListener('click', closePalette);
+            backdrop.addEventListener('click', (e) => {
+                if (e.target === backdrop) closePalette();
+            });
+            input.addEventListener('input', (e) => {
+                filterPalette(e.target.value);
+            });
+        }
+
+        /* ==========================================================================
+           DIAGNOAI MEDICAL CAMERA CONTROLLER
+           ========================================================================== */
+        window._diagnoCameraStream = null;
+        window._diagnoCameraCallback = null;
+        window._diagnoCapturedBlob = null;
+
+        window.openDiagnoCamera = function(callback) {
+            window._diagnoCameraCallback = callback;
+            window._diagnoCapturedBlob = null;
+
+            const modal = document.getElementById('diagnoCameraModal');
+            if (!modal) return;
+
+            modal.style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+
+            // Reset UI states
+            document.getElementById('cameraLiveControls').style.setProperty('display', 'flex', 'important');
+            document.getElementById('cameraReviewControls').style.setProperty('display', 'none', 'important');
+            
+            const video = document.getElementById('diagnoCameraVideo');
+            const canvas = document.getElementById('diagnoCameraCanvas');
+            const reticle = document.querySelector('.camera-target-reticle');
+            const statusMsg = document.getElementById('cameraStatusMsg');
+            const liveBadge = document.getElementById('cameraLiveBadge');
+
+            if (video) video.style.display = 'block';
+            if (canvas) canvas.style.display = 'none';
+            if (reticle) reticle.style.display = 'block';
+            if (statusMsg) statusMsg.style.display = 'none';
+            if (liveBadge) liveBadge.style.display = 'inline-flex';
+
+            window.initDiagnoCameraStream();
+            if (window.lucide) lucide.createIcons();
+        };
+
+        window.closeDiagnoCamera = function() {
+            const modal = document.getElementById('diagnoCameraModal');
+            if (modal) modal.style.display = 'none';
+            document.body.style.overflow = '';
+
+            // Stop all camera media tracks
+            if (window._diagnoCameraStream) {
+                window._diagnoCameraStream.getTracks().forEach(track => track.stop());
+                window._diagnoCameraStream = null;
+            }
+            window._diagnoCapturedBlob = null;
+        };
+
+        window.initDiagnoCameraStream = async function(deviceId) {
+            const video = document.getElementById('diagnoCameraVideo');
+            const statusMsg = document.getElementById('cameraStatusMsg');
+            const errorText = document.getElementById('cameraErrorText');
+            const select = document.getElementById('diagnoCameraSelect');
+
+            if (window._diagnoCameraStream) {
+                window._diagnoCameraStream.getTracks().forEach(track => track.stop());
+                window._diagnoCameraStream = null;
+            }
+
+            if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+                if (statusMsg) {
+                    statusMsg.style.display = 'flex';
+                    errorText.innerHTML = 'Camera access is not supported by your browser or environment.<br><small class="text-muted">Use standard file upload instead.</small>';
+                }
+                return;
+            }
+
+            const constraints = {
+                video: deviceId ? { deviceId: { exact: deviceId } } : {
+                    facingMode: { ideal: 'environment' },
+                    width: { ideal: 1280, min: 640 },
+                    height: { ideal: 960, min: 480 }
+                },
+                audio: false
+            };
+
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia(constraints);
+                window._diagnoCameraStream = stream;
+                if (video) {
+                    video.srcObject = stream;
+                    await video.play();
+                }
+                if (statusMsg) statusMsg.style.display = 'none';
+
+                // Enumerate devices for camera switch
+                if (navigator.mediaDevices.enumerateDevices && select) {
+                    const devices = await navigator.mediaDevices.enumerateDevices();
+                    const videoDevices = devices.filter(d => d.kind === 'videoinput');
+                    select.innerHTML = '';
+                    if (videoDevices.length > 0) {
+                        videoDevices.forEach((dev, idx) => {
+                            const opt = document.createElement('option');
+                            opt.value = dev.deviceId;
+                            opt.textContent = dev.label || `Camera ${idx + 1}`;
+                            if (deviceId && dev.deviceId === deviceId) opt.selected = true;
+                            select.appendChild(opt);
+                        });
+                        select.style.display = videoDevices.length > 1 ? 'inline-block' : 'none';
+                    }
+                }
+            } catch (err) {
+                console.error("Camera access error:", err);
+                if (statusMsg) {
+                    statusMsg.style.display = 'flex';
+                    if (err.name === 'NotAllowedError' || err.name === 'PermissionDeniedError') {
+                        errorText.innerHTML = 'Camera permission denied.<br><small class="text-muted">Please enable camera access in your browser settings and try again.</small>';
+                    } else if (err.name === 'NotFoundError' || err.name === 'DevicesNotFoundError') {
+                        errorText.innerHTML = 'No camera device found on this system.<br><small class="text-muted">Please connect a webcam or use file upload.</small>';
+                    } else {
+                        errorText.innerHTML = `Camera error: ${err.message || 'Unable to access video stream'}<br><small class="text-muted">Please check permissions or use file upload.</small>`;
+                    }
+                }
+            }
+        };
+
+        window.switchDiagnoCamera = function(deviceId) {
+            if (deviceId) {
+                window.initDiagnoCameraStream(deviceId);
+            }
+        };
+
+        window.captureDiagnoPhoto = function() {
+            const video = document.getElementById('diagnoCameraVideo');
+            const canvas = document.getElementById('diagnoCameraCanvas');
+            const reticle = document.querySelector('.camera-target-reticle');
+            const flash = document.getElementById('cameraFlash');
+            const liveBadge = document.getElementById('cameraLiveBadge');
+
+            if (!video || !canvas) return;
+
+            // Trigger visual shutter flash
+            if (flash) {
+                flash.classList.add('flashing');
+                setTimeout(() => flash.classList.remove('flashing'), 200);
+            }
+
+            const width = video.videoWidth || 1280;
+            const height = video.videoHeight || 960;
+            canvas.width = width;
+            canvas.height = height;
+
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(video, 0, 0, width, height);
+
+            // Switch to Review Mode
+            video.style.display = 'none';
+            canvas.style.display = 'block';
+            if (reticle) reticle.style.display = 'none';
+            if (liveBadge) liveBadge.style.display = 'none';
+
+            document.getElementById('cameraLiveControls').style.setProperty('display', 'none', 'important');
+            document.getElementById('cameraReviewControls').style.setProperty('display', 'flex', 'important');
+
+            canvas.toBlob((blob) => {
+                window._diagnoCapturedBlob = blob;
+            }, 'image/jpeg', 0.95);
+
+            if (window.lucide) lucide.createIcons();
+        };
+
+        window.retakeDiagnoPhoto = function() {
+            const video = document.getElementById('diagnoCameraVideo');
+            const canvas = document.getElementById('diagnoCameraCanvas');
+            const reticle = document.querySelector('.camera-target-reticle');
+            const liveBadge = document.getElementById('cameraLiveBadge');
+
+            window._diagnoCapturedBlob = null;
+
+            if (video) video.style.display = 'block';
+            if (canvas) canvas.style.display = 'none';
+            if (reticle) reticle.style.display = 'block';
+            if (liveBadge) liveBadge.style.display = 'inline-flex';
+
+            document.getElementById('cameraLiveControls').style.setProperty('display', 'flex', 'important');
+            document.getElementById('cameraReviewControls').style.setProperty('display', 'none', 'important');
+
+            if (window.lucide) lucide.createIcons();
+        };
+
+        window.confirmDiagnoPhoto = function() {
+            if (!window._diagnoCapturedBlob) {
+                if (window.DiagnoToast) DiagnoToast.warning('Please capture a photo first.', 'No Photo Captured');
+                return;
+            }
+
+            const timestamp = new Date().toISOString().replace(/[-:T.]/g, '').slice(0, 14);
+            const fileName = `Scan_Capture_${timestamp}.jpg`;
+            const file = new File([window._diagnoCapturedBlob], fileName, { type: 'image/jpeg' });
+
+            if (typeof window._diagnoCameraCallback === 'function') {
+                window._diagnoCameraCallback(file);
+            }
+
+            window.closeDiagnoCamera();
+        };
+
+        // Keyboard close on Escape
+        window.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                const cameraModal = document.getElementById('diagnoCameraModal');
+                if (cameraModal && cameraModal.style.display !== 'none') {
+                    window.closeDiagnoCamera();
+                }
+            }
+        });
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const currentTheme = document.documentElement.getAttribute('data-theme') || localStorage.getItem('diagnoai_theme') || 'light';
+            document.documentElement.setAttribute('data-theme', currentTheme);
+            if (typeof updateThemeUI === 'function') {
+                updateThemeUI(currentTheme);
+            }
+            if (typeof initCommandPalette === 'function') {
+                initCommandPalette();
+            }
+        });
+    </script>
+
+    <!-- ================= CAMERA CAPTURE MODAL ================= -->
+    <div class="diagno-camera-backdrop" id="diagnoCameraModal" style="display: none;">
+        <div class="diagno-camera-card">
+            <div class="diagno-camera-header">
+                <div class="d-flex align-items-center gap-2">
+                    <div class="diagno-icon-pill" style="background: rgba(37,99,235,0.1); color: var(--primary-600); width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                        <i data-lucide="camera" style="width: 20px; height: 20px;"></i>
+                    </div>
+                    <div>
+                        <h5 style="margin: 0; font-weight: 800; font-size: 1.08rem; color: var(--text-primary);">Medical Camera Scanner</h5>
+                        <p style="margin: 0; font-size: 0.78rem; color: var(--text-muted);">Align medical scan, X-Ray film, or specimen in the reticle</p>
+                    </div>
+                </div>
+                <button type="button" class="btn-diagno-icon" onclick="closeDiagnoCamera()" title="Close Camera" style="background: transparent; border: none; cursor: pointer; color: var(--text-secondary);">
+                    <i data-lucide="x" style="width: 20px; height: 20px;"></i>
+                </button>
+            </div>
+
+            <div class="diagno-camera-body">
+                <div class="diagno-camera-viewfinder" id="diagnoCameraViewfinder">
+                    <video id="diagnoCameraVideo" autoplay playsinline muted></video>
+                    <canvas id="diagnoCameraCanvas"></canvas>
+                    <div class="camera-target-reticle">
+                        <div class="reticle-corner reticle-tl"></div>
+                        <div class="reticle-corner reticle-tr"></div>
+                        <div class="reticle-corner reticle-bl"></div>
+                        <div class="reticle-corner reticle-br"></div>
+                        <div class="reticle-center-cross"></div>
+                    </div>
+                    <div class="camera-shutter-flash" id="cameraFlash"></div>
+                    <div class="camera-status-msg" id="cameraStatusMsg" style="display: none;">
+                        <i data-lucide="video-off" style="width: 36px; height: 36px; margin-bottom: 0.75rem; color: #ef4444;"></i>
+                        <div id="cameraErrorText" style="font-size: 0.95rem; font-weight: 600;">Accessing camera...</div>
+                    </div>
+                </div>
+
+                <!-- Device Selector / Controls bar -->
+                <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mt-3 px-1">
+                    <select id="diagnoCameraSelect" class="form-select form-select-sm" style="max-width: 240px; font-size: 0.82rem; background: var(--surface-card); color: var(--text-primary); border: 1px solid var(--surface-glass-border); border-radius: var(--radius-md);" onchange="switchDiagnoCamera(this.value)">
+                        <option value="">Default Camera</option>
+                    </select>
+                    <div class="d-flex align-items-center gap-2">
+                        <span class="diagno-badge diagno-badge-emerald" id="cameraLiveBadge" style="display: inline-flex; align-items: center;">
+                            <span class="live-dot-pulse"></span> Live Stream
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="diagno-camera-footer">
+                <div id="cameraLiveControls" class="d-flex align-items-center justify-content-between gap-3 w-100">
+                    <button type="button" class="btn-diagno btn-diagno-outline" onclick="closeDiagnoCamera()" style="padding: 0.5rem 1.25rem;">
+                        Cancel
+                    </button>
+                    <button type="button" class="btn-diagno btn-diagno-primary btn-diagno-lg" id="btnSnapPhoto" onclick="captureDiagnoPhoto()">
+                        <i data-lucide="camera" style="width: 18px; height: 18px;"></i>
+                        <span>Snap Photo</span>
+                    </button>
+                </div>
+                <div id="cameraReviewControls" class="d-flex align-items-center justify-content-between gap-3 w-100" style="display: none !important;">
+                    <button type="button" class="btn-diagno btn-diagno-outline" onclick="retakeDiagnoPhoto()" style="padding: 0.5rem 1.25rem;">
+                        <i data-lucide="rotate-ccw" style="width: 16px; height: 16px;"></i>
+                        <span>Retake</span>
+                    </button>
+                    <button type="button" class="btn-diagno btn-diagno-success btn-diagno-lg" id="btnUsePhoto" onclick="confirmDiagnoPhoto()">
+                        <i data-lucide="check" style="width: 18px; height: 18px;"></i>
+                        <span>Use This Scan</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% block extra_scripts %}{% endblock %}
+</body>
+</html>

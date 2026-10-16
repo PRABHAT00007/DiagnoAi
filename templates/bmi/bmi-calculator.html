@@ -1,0 +1,250 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Interactive Body Mass Index (BMI) Calculator | DiagnoAI{% endblock %}
+
+{% block extra_head %}
+<style>
+    .bmi-container {
+        max-width: 950px;
+        margin: 3rem auto 5rem;
+        padding: 0 1.5rem;
+    }
+
+    .bmi-card {
+        background: var(--surface-card);
+        border: 1px solid var(--surface-glass-border);
+        border-radius: var(--radius-xl);
+        padding: 3rem 2.5rem;
+        box-shadow: var(--shadow-xl);
+    }
+
+    .bmi-gauge-display {
+        text-align: center;
+        padding: 2rem;
+        background: var(--bg-main);
+        border-radius: var(--radius-xl);
+        border: 1px solid var(--surface-glass-border);
+        margin-bottom: 2rem;
+    }
+
+    .bmi-value-large {
+        font-size: clamp(3rem, 6vw, 4.5rem);
+        font-weight: 800;
+        line-height: 1;
+        background: linear-gradient(135deg, var(--primary-700), var(--cyan-600));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    .bmi-category-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.5rem 1.5rem;
+        border-radius: var(--radius-full);
+        font-size: 1.1rem;
+        font-weight: 800;
+        margin-top: 1rem;
+    }
+
+    .bmi-range-bar {
+        height: 14px;
+        border-radius: var(--radius-full);
+        background: linear-gradient(90deg, #38bdf8 0%, #34d399 35%, #fbbf24 65%, #f43f5e 100%);
+        position: relative;
+        margin: 2.5rem 0 1rem;
+    }
+
+    .bmi-range-indicator {
+        position: absolute;
+        top: -8px;
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        background: white;
+        border: 4px solid var(--primary-700);
+        box-shadow: var(--shadow-md);
+        transform: translateX(-50%);
+        transition: left 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .range-labels {
+        display: flex;
+        justify-content: space-between;
+        font-size: 0.8rem;
+        font-weight: 700;
+        color: var(--text-muted);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="bmi-container">
+    <!-- Header -->
+    <div style="background: linear-gradient(135deg, rgba(6, 182, 212, 0.08), rgba(16, 185, 129, 0.05)); border: 1px solid var(--surface-glass-border); border-radius: var(--radius-xl); padding: 2.5rem 2rem; margin-bottom: 2.5rem; backdrop-filter: blur(16px);">
+        <div class="d-flex align-items-center justify-content-between flex-wrap gap-3 mb-3">
+            <a href="{% url 'index' %}" class="btn-diagno btn-diagno-outline" style="padding: 0.4rem 0.9rem; font-size: 0.85rem;">
+                <i data-lucide="arrow-left" style="width: 16px; height: 16px;"></i>
+                <span>Back to Home</span>
+            </a>
+            <span class="diagno-badge diagno-badge-cyan">Biometric Metric</span>
+        </div>
+
+        <h1 style="font-size: clamp(1.8rem, 3vw, 2.5rem); font-weight: 800; color: var(--text-primary); margin-bottom: 0.5rem;">
+            Real-Time Body Mass Index (BMI) Calculator
+        </h1>
+        <p style="color: var(--text-secondary); font-size: 1.05rem; margin: 0; max-width: 800px;">
+            Calculate your Body Mass Index (BMI), identify your clinical weight classification, and view your ideal healthy target range.
+        </p>
+    </div>
+
+    <!-- BMI Main Card -->
+    <div class="bmi-card">
+        <!-- Interactive Visual Gauge -->
+        <div class="bmi-gauge-display">
+            <small style="text-transform: uppercase; letter-spacing: 1.5px; font-weight: 700; color: var(--text-muted);">Your Calculated BMI</small>
+            <div class="bmi-value-large" id="bmiValue">22.5</div>
+            <div class="bmi-category-badge" id="bmiCategoryBadge" style="background: #d1fae5; color: #059669;">
+                <span class="status-dot" style="background: #059669;"></span>
+                <span id="bmiCategoryText">Normal Weight</span>
+            </div>
+
+            <!-- Gradient Spectrum Slider Bar -->
+            <div class="bmi-range-bar">
+                <div class="bmi-range-indicator" id="bmiIndicator" style="left: 45%;"></div>
+            </div>
+            <div class="range-labels">
+                <span>Underweight (&lt;18.5)</span>
+                <span>Normal (18.5-24.9)</span>
+                <span>Overweight (25-29.9)</span>
+                <span>Obese (&ge;30)</span>
+            </div>
+        </div>
+
+        <!-- Input Form Sliders & Boxes -->
+        <div class="row g-4">
+            <div class="col-md-6">
+                <div style="background: var(--bg-main); border-radius: var(--radius-lg); padding: 1.5rem; border: 1px solid var(--surface-glass-border);">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <label class="diagno-label mb-0">Height (cm)</label>
+                        <span class="badge bg-primary" id="heightDisplay" style="font-size: 0.95rem;">175 cm</span>
+                    </div>
+                    <input type="range" class="form-range" id="heightSlider" min="100" max="230" value="175" oninput="updateFromSlider()">
+                    <div class="mt-2">
+                        <input type="number" class="diagno-input" id="heightBox" min="100" max="230" value="175" oninput="updateFromBox()">
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div style="background: var(--bg-main); border-radius: var(--radius-lg); padding: 1.5rem; border: 1px solid var(--surface-glass-border);">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <label class="diagno-label mb-0">Weight (kg)</label>
+                        <span class="badge bg-primary" id="weightDisplay" style="font-size: 0.95rem;">69 kg</span>
+                    </div>
+                    <input type="range" class="form-range" id="weightSlider" min="30" max="200" value="69" oninput="updateFromSlider()">
+                    <div class="mt-2">
+                        <input type="number" class="diagno-input" id="weightBox" min="30" max="200" value="69" oninput="updateFromBox()">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Ideal Weight & Recommendation Output -->
+        <div class="row g-3 mt-3">
+            <div class="col-md-6">
+                <div style="background: rgba(37, 99, 235, 0.04); border: 1px solid var(--primary-200); border-radius: var(--radius-lg); padding: 1.25rem;">
+                    <div style="font-size: 0.85rem; font-weight: 700; color: var(--primary-700); margin-bottom: 0.25rem;">
+                        Ideal Healthy Weight Range:
+                    </div>
+                    <div style="font-size: 1.25rem; font-weight: 800; color: var(--text-primary);" id="idealWeightText">
+                        56.7 kg &ndash; 76.3 kg
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div style="background: rgba(16, 185, 129, 0.04); border: 1px solid #a7f3d0; border-radius: var(--radius-lg); padding: 1.25rem;">
+                    <div style="font-size: 0.85rem; font-weight: 700; color: #065f46; margin-bottom: 0.25rem;">
+                        Recommended Daily Caloric Intake:
+                    </div>
+                    <div style="font-size: 1.25rem; font-weight: 800; color: var(--text-primary);" id="caloricIntakeText">
+                        ~ 2,150 kcal / day
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    function calculateBMI(hCm, wKg) {
+        const hM = hCm / 100;
+        const bmi = (wKg / (hM * hM)).toFixed(1);
+        
+        document.getElementById("bmiValue").textContent = bmi;
+        
+        // Update Indicator percentage (scale 15 to 40)
+        let percent = ((bmi - 15) / (40 - 15)) * 100;
+        percent = Math.max(2, Math.min(98, percent));
+        document.getElementById("bmiIndicator").style.left = percent + "%";
+
+        const badge = document.getElementById("bmiCategoryBadge");
+        const categoryText = document.getElementById("bmiCategoryText");
+
+        if (bmi < 18.5) {
+            badge.style.background = "#e0f2fe";
+            badge.style.color = "#0369a1";
+            categoryText.textContent = "Underweight (<18.5)";
+        } else if (bmi >= 18.5 && bmi <= 24.9) {
+            badge.style.background = "#d1fae5";
+            badge.style.color = "#059669";
+            categoryText.textContent = "Normal Healthy Weight (18.5 - 24.9)";
+        } else if (bmi >= 25.0 && bmi <= 29.9) {
+            badge.style.background = "#fef3c7";
+            badge.style.color = "#b45309";
+            categoryText.textContent = "Overweight (25.0 - 29.9)";
+        } else {
+            badge.style.background = "#ffe4e6";
+            badge.style.color = "#e11d48";
+            categoryText.textContent = "Obese (≥30.0)";
+        }
+
+        // Ideal weight calculation (BMI 18.5 - 24.9)
+        const minIdeal = (18.5 * hM * hM).toFixed(1);
+        const maxIdeal = (24.9 * hM * hM).toFixed(1);
+        document.getElementById("idealWeightText").textContent = `${minIdeal} kg - ${maxIdeal} kg`;
+
+        // Baseline Calorie Estimate
+        const bmr = (10 * wKg) + (6.25 * hCm) - (5 * 30) + 5;
+        document.getElementById("caloricIntakeText").textContent = `~ ${Math.round(bmr * 1.35)} kcal / day`;
+    }
+
+    function updateFromSlider() {
+        const h = document.getElementById("heightSlider").value;
+        const w = document.getElementById("weightSlider").value;
+        document.getElementById("heightDisplay").textContent = h + " cm";
+        document.getElementById("weightDisplay").textContent = w + " kg";
+        document.getElementById("heightBox").value = h;
+        document.getElementById("weightBox").value = w;
+        calculateBMI(parseFloat(h), parseFloat(w));
+    }
+
+    function updateFromBox() {
+        const h = document.getElementById("heightBox").value;
+        const w = document.getElementById("weightBox").value;
+        document.getElementById("heightDisplay").textContent = h + " cm";
+        document.getElementById("weightDisplay").textContent = w + " kg";
+        document.getElementById("heightSlider").value = h;
+        document.getElementById("weightSlider").value = w;
+        calculateBMI(parseFloat(h), parseFloat(w));
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+        calculateBMI(175, 69);
+    });
+</script>
+{% endblock %}

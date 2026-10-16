@@ -1,0 +1,314 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Diabetes Risk Assessment | DiagnoAI{% endblock %}
+
+{% block extra_head %}
+<style>
+    .form-container {
+        max-width: 1000px;
+        margin: 3rem auto 5rem;
+        padding: 0 1.5rem;
+    }
+
+    .form-card {
+        background: var(--surface-card);
+        border: 1px solid var(--surface-glass-border);
+        border-radius: var(--radius-xl);
+        padding: 3rem 2.5rem;
+        box-shadow: var(--shadow-xl);
+    }
+
+    .form-section-title {
+        font-size: 1.1rem;
+        font-weight: 800;
+        color: var(--primary-700);
+        margin: 1.5rem 0 1rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 2px solid var(--primary-100);
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .demo-btn-group {
+        display: flex;
+        gap: 0.75rem;
+        flex-wrap: wrap;
+        margin-bottom: 1.5rem;
+    }
+
+    .demo-pill-btn {
+        padding: 0.4rem 0.9rem;
+        border-radius: var(--radius-full);
+        font-size: 0.8rem;
+        font-weight: 700;
+        border: 1px solid var(--surface-glass-border);
+        background: var(--bg-main);
+        color: var(--text-secondary);
+        cursor: pointer;
+        transition: var(--transition-fast);
+    }
+
+    .demo-pill-btn:hover {
+        background: var(--primary-100);
+        color: var(--primary-800);
+        border-color: var(--primary-300);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="form-container">
+    <!-- Header Card -->
+    <div style="background: linear-gradient(135deg, rgba(37, 99, 235, 0.08), rgba(6, 182, 212, 0.05)); border: 1px solid var(--surface-glass-border); border-radius: var(--radius-xl); padding: 2.5rem 2rem; margin-bottom: 2.5rem; backdrop-filter: blur(16px);">
+        <div class="d-flex align-items-center justify-content-between flex-wrap gap-3 mb-3">
+            <a href="{% url 'index' %}" class="btn-diagno btn-diagno-outline" style="padding: 0.4rem 0.9rem; font-size: 0.85rem;">
+                <i data-lucide="arrow-left" style="width: 16px; height: 16px;"></i>
+                <span>Back to Home</span>
+            </a>
+            <span class="diagno-badge diagno-badge-blue">Ensemble ML Classifier</span>
+        </div>
+
+        <h1 style="font-size: clamp(1.8rem, 3vw, 2.5rem); font-weight: 800; color: var(--text-primary); margin-bottom: 0.5rem;">
+            Diabetes Risk Stratification
+        </h1>
+        <p style="color: var(--text-secondary); font-size: 1.05rem; margin: 0; max-width: 800px;">
+            Evaluate glycemic markers, body mass index, insulin response, and family pedigree to predict Type 2 diabetes risk.
+        </p>
+    </div>
+
+    <!-- Form Main Card -->
+    <div class="form-card">
+        <!-- Quick Demo Presets -->
+        <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-3">
+            <span style="font-size: 0.85rem; font-weight: 700; color: var(--text-muted);">Quick Test Presets:</span>
+            <div class="demo-btn-group mb-0">
+                <button type="button" class="demo-pill-btn" onclick="fillNormalSample()">
+                    <i data-lucide="check" style="width: 12px; height: 12px; display: inline;"></i> Normal Sample (Non-Diabetic)
+                </button>
+                <button type="button" class="demo-pill-btn" onclick="fillElevatedSample()" style="color: #e11d48;">
+                    <i data-lucide="alert-triangle" style="width: 12px; height: 12px; display: inline;"></i> Elevated Risk Sample
+                </button>
+            </div>
+        </div>
+
+        <form action="{% url 'diabetes-predict' %}" method="post" id="diabetesForm">
+            {% csrf_token %}
+
+            <div class="form-section-title">
+                <i data-lucide="droplet" style="width: 18px; height: 18px;"></i>
+                <span>1. Glycemic & Biometric Markers</span>
+            </div>
+
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <div class="diagno-input-group">
+                        <label class="diagno-label">Fasting Plasma Glucose (mg/dl)</label>
+                        <input type="number" step="any" name="glucose" id="f_glucose" class="diagno-input" placeholder="e.g. 115" min="0" required oninput="syncDiabFromNumber('f_glucose','f_glucose_range')">
+                        <input type="range" id="f_glucose_range" min="0" max="300" value="115" class="form-range mt-1" oninput="syncDiabFromSlider('f_glucose_range','f_glucose')">
+                        <span class="diagno-input-helper">2-hour oral glucose tolerance test value</span>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="diagno-input-group">
+                        <label class="diagno-label">Diastolic Blood Pressure (mm Hg)</label>
+                        <input type="number" step="any" name="bp" id="f_bp" class="diagno-input" placeholder="e.g. 72" min="0" required oninput="syncDiabFromNumber('f_bp','f_bp_range')">
+                        <input type="range" id="f_bp_range" min="0" max="150" value="72" class="form-range mt-1" oninput="syncDiabFromSlider('f_bp_range','f_bp')">
+                        <span class="diagno-input-helper">Diastolic resting blood pressure</span>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="diagno-input-group">
+                        <label class="diagno-label">2-Hour Serum Insulin (mu U/ml)</label>
+                        <input type="number" step="any" name="insulin" id="f_insulin" class="diagno-input" placeholder="e.g. 85" min="0" required oninput="syncDiabFromNumber('f_insulin','f_insulin_range')">
+                        <input type="range" id="f_insulin_range" min="0" max="500" value="85" class="form-range mt-1" oninput="syncDiabFromSlider('f_insulin_range','f_insulin')">
+                        <span class="diagno-input-helper">Serum insulin level (0 if unmeasured)</span>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="diagno-input-group">
+                        <label class="diagno-label">Triceps Skin Fold Thickness (mm)</label>
+                        <input type="number" step="any" name="skinThickness" id="f_skin" class="diagno-input" placeholder="e.g. 23" min="0" required oninput="syncDiabFromNumber('f_skin','f_skin_range')">
+                        <input type="range" id="f_skin_range" min="0" max="100" value="23" class="form-range mt-1" oninput="syncDiabFromSlider('f_skin_range','f_skin')">
+                        <span class="diagno-input-helper">Skin fold measurement (0 if unmeasured)</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-section-title">
+                <i data-lucide="user" style="width: 18px; height: 18px;"></i>
+                <span>2. Anthropometric & Genetic Metrics</span>
+            </div>
+
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <div class="diagno-input-group">
+                        <label class="diagno-label">Body Mass Index (BMI)</label>
+                        <input type="number" step="0.1" name="bmi" id="f_bmi" class="diagno-input" placeholder="e.g. 24.5" min="10" max="70" required oninput="syncDiabFromNumber('f_bmi','f_bmi_range')">
+                        <input type="range" id="f_bmi_range" min="10" max="70" step="0.1" value="24.5" class="form-range mt-1" oninput="syncDiabFromSlider('f_bmi_range','f_bmi')">
+                        <span class="diagno-input-helper">Weight in kg / (Height in m)&sup2;</span>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="diagno-input-group">
+                        <label class="diagno-label">Diabetes Pedigree Function</label>
+                        <input type="number" step="0.001" name="pedigree" id="f_pedigree" class="diagno-input" placeholder="e.g. 0.35" min="0" max="3" required oninput="syncDiabFromNumber('f_pedigree','f_pedigree_range')">
+                        <input type="range" id="f_pedigree_range" min="0" max="3" step="0.001" value="0.35" class="form-range mt-1" oninput="syncDiabFromSlider('f_pedigree_range','f_pedigree')">
+                        <span class="diagno-input-helper">Genetic family history score (0.05 &ndash; 2.5)</span>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="diagno-input-group">
+                        <label class="diagno-label">Number of Pregnancies</label>
+                        <input type="number" name="pregnancies" id="f_preg" class="diagno-input" placeholder="e.g. 0" min="0" max="20" required oninput="syncDiabFromNumber('f_preg','f_preg_range')">
+                        <input type="range" id="f_preg_range" min="0" max="20" value="0" class="form-range mt-1" oninput="syncDiabFromSlider('f_preg_range','f_preg')">
+                        <span class="diagno-input-helper">0 for male patients or zero pregnancies</span>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="diagno-input-group">
+                        <label class="diagno-label">Age (Years)</label>
+                        <input type="number" name="age" id="f_age" class="diagno-input" placeholder="e.g. 38" min="1" max="120" required oninput="syncDiabFromNumber('f_age','f_age_range')">
+                        <input type="range" id="f_age_range" min="1" max="120" value="38" class="form-range mt-1" oninput="syncDiabFromSlider('f_age_range','f_age')">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Real-Time Pre-submission Live Risk Meter Gauge -->
+            <div class="mt-4 p-3 p-md-4 rounded-3" style="background: linear-gradient(135deg, rgba(37,99,235,0.04), rgba(6,182,212,0.04)); border: 1px solid var(--surface-glass-border);">
+                <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-2">
+                    <div class="d-flex align-items-center gap-2">
+                        <i data-lucide="gauge" style="width: 18px; height: 18px; color: var(--primary-600);"></i>
+                        <span style="font-weight: 800; color: var(--text-primary); font-size: 0.95rem;">Live Glycemic Risk Index Preview</span>
+                    </div>
+                    <span id="diabRiskBadge" class="diagno-badge diagno-badge-emerald" style="font-size: 0.8rem; font-weight: 700;">
+                        Low Risk Range
+                    </span>
+                </div>
+
+                <!-- Animated Progress Bar -->
+                <div class="position-relative my-3" style="height: 12px; background: rgba(0,0,0,0.06); border-radius: 999px; overflow: hidden;">
+                    <div id="diabRiskProgressBar" style="height: 100%; width: 22%; background: linear-gradient(90deg, #10b981, #f59e0b, #ef4444); border-radius: 999px; transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);"></div>
+                </div>
+
+                <div class="d-flex align-items-center justify-content-between flex-wrap gap-2" style="font-size: 0.82rem; color: var(--text-muted);">
+                    <div>
+                        <span>Estimated Diabetic Risk: </span>
+                        <strong id="diabRiskScoreText" style="color: var(--text-primary); font-size: 0.9rem;">22%</strong>
+                    </div>
+                    <div id="diabRiskInsight" style="font-weight: 600; color: var(--text-secondary);">
+                        Fasting plasma glucose and metabolic parameters within normoglycemic bounds.
+                    </div>
+                </div>
+            </div>
+
+            <!-- Submit Button -->
+            <div class="text-center mt-4">
+                <button type="submit" class="btn-diagno btn-diagno-primary btn-diagno-lg w-100" style="max-width: 450px;">
+                    <i data-lucide="pie-chart" style="width: 20px; height: 20px;"></i>
+                    <span>Calculate Diabetes Risk Stratification</span>
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    function syncDiabFromNumber(inputId, sliderId) {
+        const n = document.getElementById(inputId);
+        const s = document.getElementById(sliderId);
+        if (n && s) s.value = n.value;
+        updateLiveDiabRisk();
+    }
+    function syncDiabFromSlider(sliderId, inputId) {
+        const s = document.getElementById(sliderId);
+        const n = document.getElementById(inputId);
+        if (s && n) n.value = s.value;
+        updateLiveDiabRisk();
+    }
+
+    function updateLiveDiabRisk() {
+        const gluc = parseFloat(document.getElementById('f_glucose')?.value || 100);
+        const bp = parseFloat(document.getElementById('f_bp')?.value || 70);
+        const ins = parseFloat(document.getElementById('f_insulin')?.value || 80);
+        const bmi = parseFloat(document.getElementById('f_bmi')?.value || 24);
+        const ped = parseFloat(document.getElementById('f_pedigree')?.value || 0.3);
+        const preg = parseFloat(document.getElementById('f_preg')?.value || 0);
+        const age = parseFloat(document.getElementById('f_age')?.value || 35);
+
+        // Clinical ADA/FINDRISC-aligned weighted heuristic
+        let score = 10;
+        if (gluc > 100) score += (gluc - 100) * 0.45;
+        if (bmi > 25) score += (bmi - 25) * 1.5;
+        if (age > 40) score += (age - 40) * 0.6;
+        if (bp > 80) score += (bp - 80) * 0.3;
+        if (ped > 0.5) score += ped * 15;
+        if (ins > 160) score += (ins - 160) * 0.08;
+        if (preg > 3) score += (preg - 3) * 2;
+
+        score = Math.min(Math.max(Math.round(score), 5), 98);
+
+        const bar = document.getElementById('diabRiskProgressBar');
+        const badge = document.getElementById('diabRiskBadge');
+        const scoreText = document.getElementById('diabRiskScoreText');
+        const insight = document.getElementById('diabRiskInsight');
+
+        if (bar) bar.style.width = score + '%';
+        if (scoreText) scoreText.textContent = score + '%';
+
+        if (score >= 60) {
+            badge.className = 'diagno-badge diagno-badge-rose';
+            badge.textContent = 'Elevated Risk Range';
+            if (bar) bar.style.background = '#ef4444';
+            if (insight) insight.textContent = 'High glycemic / metabolic risk indicated. Clinical screening advised.';
+        } else if (score >= 35) {
+            badge.className = 'diagno-badge diagno-badge-amber';
+            badge.textContent = 'Moderate Pre-diabetic Range';
+            if (bar) bar.style.background = '#f59e0b';
+            if (insight) insight.textContent = 'Borderline glycemic indices. Lifestyle intervention recommended.';
+        } else {
+            badge.className = 'diagno-badge diagno-badge-emerald';
+            badge.textContent = 'Low Risk Range';
+            if (bar) bar.style.background = '#10b981';
+            if (insight) insight.textContent = 'Fasting plasma glucose and metabolic parameters within normoglycemic bounds.';
+        }
+    }
+
+    function fillNormalSample() {
+        const vals = { f_glucose:98, f_bp:70, f_insulin:65, f_skin:20, f_bmi:22.4, f_pedigree:0.245, f_preg:1, f_age:28 };
+        Object.entries(vals).forEach(([id, v]) => {
+            document.getElementById(id).value = v;
+            const sl = document.getElementById(id + "_range");
+            if (sl) sl.value = v;
+        });
+        updateLiveDiabRisk();
+    }
+
+    function fillElevatedSample() {
+        const vals = { f_glucose:168, f_bp:88, f_insulin:180, f_skin:38, f_bmi:36.2, f_pedigree:0.875, f_preg:4, f_age:54 };
+        Object.entries(vals).forEach(([id, v]) => {
+            document.getElementById(id).value = v;
+            const sl = document.getElementById(id + "_range");
+            if (sl) sl.value = v;
+        });
+        updateLiveDiabRisk();
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        document.querySelectorAll('#diabForm input').forEach(el => {
+            el.addEventListener('change', updateLiveDiabRisk);
+            el.addEventListener('input', updateLiveDiabRisk);
+        });
+        updateLiveDiabRisk();
+    });
+</script>
+{% endblock %}

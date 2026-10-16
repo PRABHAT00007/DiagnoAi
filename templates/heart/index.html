@@ -1,0 +1,411 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Cardiovascular Risk Assessment | DiagnoAI{% endblock %}
+
+{% block extra_head %}
+<style>
+    .form-container {
+        max-width: 1000px;
+        margin: 3rem auto 5rem;
+        padding: 0 1.5rem;
+    }
+
+    .form-card {
+        background: var(--surface-card);
+        border: 1px solid var(--surface-glass-border);
+        border-radius: var(--radius-xl);
+        padding: 3rem 2.5rem;
+        box-shadow: var(--shadow-xl);
+    }
+
+    .form-section-title {
+        font-size: 1.1rem;
+        font-weight: 800;
+        color: var(--primary-700);
+        margin: 1.5rem 0 1rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 2px solid var(--primary-100);
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .demo-btn-group {
+        display: flex;
+        gap: 0.75rem;
+        flex-wrap: wrap;
+        margin-bottom: 1.5rem;
+    }
+
+    .demo-pill-btn {
+        padding: 0.4rem 0.9rem;
+        border-radius: var(--radius-full);
+        font-size: 0.8rem;
+        font-weight: 700;
+        border: 1px solid var(--surface-glass-border);
+        background: var(--bg-main);
+        color: var(--text-secondary);
+        cursor: pointer;
+        transition: var(--transition-fast);
+    }
+
+    .demo-pill-btn:hover {
+        background: var(--primary-100);
+        color: var(--primary-800);
+        border-color: var(--primary-300);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="form-container">
+    <!-- Header Card -->
+    <div style="background: linear-gradient(135deg, rgba(225, 29, 72, 0.08), rgba(37, 99, 235, 0.05)); border: 1px solid var(--surface-glass-border); border-radius: var(--radius-xl); padding: 2.5rem 2rem; margin-bottom: 2.5rem; backdrop-filter: blur(16px);">
+        <div class="d-flex align-items-center justify-content-between flex-wrap gap-3 mb-3">
+            <a href="{% url 'index' %}" class="btn-diagno btn-diagno-outline" style="padding: 0.4rem 0.9rem; font-size: 0.85rem;">
+                <i data-lucide="arrow-left" style="width: 16px; height: 16px;"></i>
+                <span>Back to Home</span>
+            </a>
+            <span class="diagno-badge diagno-badge-rose">Random Forest Classifier</span>
+        </div>
+
+        <h1 style="font-size: clamp(1.8rem, 3vw, 2.5rem); font-weight: 800; color: var(--text-primary); margin-bottom: 0.5rem;">
+            Cardiovascular Disease Risk Analyzer
+        </h1>
+        <p style="color: var(--text-secondary); font-size: 1.05rem; margin: 0; max-width: 800px;">
+            Enter 13 routine cardiac clinical parameters to assess coronary artery disease risk and personalized preventative roadmaps.
+        </p>
+    </div>
+
+    <!-- Form Main Card -->
+    <div class="form-card">
+        <!-- Quick Demo Presets -->
+        <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-3">
+            <span style="font-size: 0.85rem; font-weight: 700; color: var(--text-muted);">Quick Test Presets:</span>
+            <div class="demo-btn-group mb-0">
+                <button type="button" class="demo-pill-btn" onclick="fillNormalSample()">
+                    <i data-lucide="check" style="width: 12px; height: 12px; display: inline;"></i> Normal Patient Sample
+                </button>
+                <button type="button" class="demo-pill-btn" onclick="fillElevatedSample()" style="color: #e11d48;">
+                    <i data-lucide="alert-triangle" style="width: 12px; height: 12px; display: inline;"></i> Elevated Risk Sample
+                </button>
+            </div>
+        </div>
+
+        <form action="{% url 'heart-disease-predict' %}" method="post" id="heartForm">
+            {% csrf_token %}
+
+            <!-- Category 1: Demographics & Chest Pain -->
+            <div class="form-section-title">
+                <i data-lucide="user" style="width: 18px; height: 18px;"></i>
+                <span>1. Patient Demographics & Symptom History</span>
+            </div>
+
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <div class="diagno-input-group">
+                        <label class="diagno-label">Age (Years)</label>
+                        <input type="number" name="age" id="f_age" class="diagno-input" placeholder="e.g. 52" min="1" max="120" required oninput="syncFromNumber('f_age','f_age_range')">
+                        <input type="range" id="f_age_range" min="1" max="120" value="52" class="form-range mt-1" oninput="syncFromSlider('f_age_range','f_age')">
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="diagno-input-group">
+                        <label class="diagno-label">Biological Sex</label>
+                        <select name="sex" id="f_sex" class="diagno-select" required>
+                            <option value="" disabled selected>Select Sex</option>
+                            <option value="1">Male</option>
+                            <option value="0">Female</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="diagno-input-group">
+                        <label class="diagno-label">Chest Pain Type</label>
+                        <select name="cp" id="f_cp" class="diagno-select" required>
+                            <option value="" disabled selected>Select Angina Type</option>
+                            <option value="0">0: Typical Angina</option>
+                            <option value="1">1: Atypical Angina</option>
+                            <option value="2">2: Non-anginal Pain</option>
+                            <option value="3">3: Asymptomatic</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Category 2: Resting Hemodynamics & Lipid Panel -->
+            <div class="form-section-title">
+                <i data-lucide="activity" style="width: 18px; height: 18px;"></i>
+                <span>2. Hemodynamics & Lipid Panel</span>
+            </div>
+
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <div class="diagno-input-group">
+                        <label class="diagno-label">Resting Blood Pressure (mm Hg)</label>
+                        <input type="number" name="trestbps" id="f_trestbps" class="diagno-input" placeholder="e.g. 120" min="50" max="250" required oninput="syncFromNumber('f_trestbps','f_trestbps_range')">
+                        <input type="range" id="f_trestbps_range" min="50" max="250" value="120" class="form-range mt-1" oninput="syncFromSlider('f_trestbps_range','f_trestbps')">
+                        <span class="diagno-input-helper">Systolic pressure on hospital admission</span>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="diagno-input-group">
+                        <label class="diagno-label">Serum Cholesterol (mg/dl)</label>
+                        <input type="number" name="chol" id="f_chol" class="diagno-input" placeholder="e.g. 210" min="100" max="600" required oninput="syncFromNumber('f_chol','f_chol_range')">
+                        <input type="range" id="f_chol_range" min="100" max="600" value="210" class="form-range mt-1" oninput="syncFromSlider('f_chol_range','f_chol')">
+                        <span class="diagno-input-helper">Total serum cholesterol level</span>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="diagno-input-group">
+                        <label class="diagno-label">Fasting Blood Sugar &gt; 120 mg/dl</label>
+                        <select name="fbs" id="f_fbs" class="diagno-select" required>
+                            <option value="0" selected>0: False (&le; 120 mg/dl)</option>
+                            <option value="1">1: True (&gt; 120 mg/dl)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="diagno-input-group">
+                        <label class="diagno-label">Resting ECG Results</label>
+                        <select name="restecg" id="f_restecg" class="diagno-select" required>
+                            <option value="0" selected>0: Normal</option>
+                            <option value="1">1: ST-T Wave Abnormality</option>
+                            <option value="2">2: Left Ventricular Hypertrophy</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Category 3: Exercise Stress Test Metrics -->
+            <div class="form-section-title">
+                <i data-lucide="zap" style="width: 18px; height: 18px;"></i>
+                <span>3. Exercise Stress Test Findings</span>
+            </div>
+
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <div class="diagno-input-group">
+                        <label class="diagno-label">Max Heart Rate (bpm)</label>
+                        <input type="number" name="thalach" id="f_thalach" class="diagno-input" placeholder="e.g. 155" min="60" max="230" required oninput="syncFromNumber('f_thalach','f_thalach_range')">
+                        <input type="range" id="f_thalach_range" min="60" max="230" value="155" class="form-range mt-1" oninput="syncFromSlider('f_thalach_range','f_thalach')">
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="diagno-input-group">
+                        <label class="diagno-label">Exercise Induced Angina</label>
+                        <select name="exang" id="f_exang" class="diagno-select" required>
+                            <option value="0" selected>0: No</option>
+                            <option value="1">1: Yes</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="diagno-input-group">
+                        <label class="diagno-label">ST Depression (Oldpeak)</label>
+                        <input type="number" step="0.1" name="oldpeak" id="f_oldpeak" class="diagno-input" placeholder="e.g. 1.2" min="0" max="10" required oninput="syncFromNumber('f_oldpeak','f_oldpeak_range')">
+                        <input type="range" id="f_oldpeak_range" min="0" max="10" step="0.1" value="1.2" class="form-range mt-1" oninput="syncFromSlider('f_oldpeak_range','f_oldpeak')">
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="diagno-input-group">
+                        <label class="diagno-label">Slope of Peak Exercise ST</label>
+                        <select name="slope" id="f_slope" class="diagno-select" required>
+                            <option value="0">0: Upsloping</option>
+                            <option value="1" selected>1: Flat</option>
+                            <option value="2">2: Downsloping</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="diagno-input-group">
+                        <label class="diagno-label">Major Vessels (0-3 via Fluoroscopy)</label>
+                        <select name="ca" id="f_ca" class="diagno-select" required>
+                            <option value="0" selected>0 Major Vessels</option>
+                            <option value="1">1 Major Vessel</option>
+                            <option value="2">2 Major Vessels</option>
+                            <option value="3">3 Major Vessels</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="diagno-input-group">
+                        <label class="diagno-label">Thallium Stress Result</label>
+                        <select name="thal" id="f_thal" class="diagno-select" required>
+                            <option value="1">1: Normal</option>
+                            <option value="2" selected>2: Fixed Defect</option>
+                            <option value="3">3: Reversible Defect</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Real-Time Pre-submission Live Risk Meter Gauge -->
+            <div class="mt-4 p-3 p-md-4 rounded-3" style="background: linear-gradient(135deg, rgba(37,99,235,0.04), rgba(244,63,94,0.04)); border: 1px solid var(--surface-glass-border);">
+                <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-2">
+                    <div class="d-flex align-items-center gap-2">
+                        <i data-lucide="gauge" style="width: 18px; height: 18px; color: var(--primary-600);"></i>
+                        <span style="font-weight: 800; color: var(--text-primary); font-size: 0.95rem;">Live Real-Time Risk Index Preview</span>
+                    </div>
+                    <span id="heartRiskBadge" class="diagno-badge diagno-badge-emerald" style="font-size: 0.8rem; font-weight: 700;">
+                        Optimal Range
+                    </span>
+                </div>
+
+                <!-- Animated Progress Bar -->
+                <div class="position-relative my-3" style="height: 12px; background: rgba(0,0,0,0.06); border-radius: 999px; overflow: hidden;">
+                    <div id="heartRiskProgressBar" style="height: 100%; width: 28%; background: linear-gradient(90deg, #10b981, #f59e0b, #ef4444); border-radius: 999px; transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);"></div>
+                </div>
+
+                <div class="d-flex align-items-center justify-content-between flex-wrap gap-2" style="font-size: 0.82rem; color: var(--text-muted);">
+                    <div>
+                        <span>Estimated Risk Score: </span>
+                        <strong id="heartRiskScoreText" style="color: var(--text-primary); font-size: 0.9rem;">28%</strong>
+                    </div>
+                    <div id="heartRiskInsight" style="font-weight: 600; color: var(--text-secondary);">
+                        Vitals within acceptable parameters
+                    </div>
+                </div>
+            </div>
+
+            <!-- Submit Button -->
+            <div class="text-center mt-4">
+                <button type="submit" class="btn-diagno btn-diagno-primary btn-diagno-lg w-100" style="max-width: 450px;">
+                    <i data-lucide="heart" style="width: 20px; height: 20px;"></i>
+                    <span>Calculate Cardiovascular Risk Score</span>
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    /* ── Synchronized slider helper ── */
+    function syncFromNumber(inputId, sliderId) {
+        const n = document.getElementById(inputId);
+        const s = document.getElementById(sliderId);
+        if (n && s) s.value = n.value;
+        updateLiveHeartRisk();
+    }
+    function syncFromSlider(sliderId, inputId) {
+        const s = document.getElementById(sliderId);
+        const n = document.getElementById(inputId);
+        if (s && n) n.value = s.value;
+        updateLiveHeartRisk();
+    }
+
+    function updateLiveHeartRisk() {
+        const age = parseFloat(document.getElementById('f_age')?.value || 50);
+        const sex = parseFloat(document.getElementById('f_sex')?.value || 1);
+        const cp = parseFloat(document.getElementById('f_cp')?.value || 0);
+        const bp = parseFloat(document.getElementById('f_trestbps')?.value || 120);
+        const chol = parseFloat(document.getElementById('f_chol')?.value || 200);
+        const fbs = parseFloat(document.getElementById('f_fbs')?.value || 0);
+        const thalach = parseFloat(document.getElementById('f_thalach')?.value || 150);
+        const exang = parseFloat(document.getElementById('f_exang')?.value || 0);
+        const oldpeak = parseFloat(document.getElementById('f_oldpeak')?.value || 0);
+        const ca = parseFloat(document.getElementById('f_ca')?.value || 0);
+        const thal = parseFloat(document.getElementById('f_thal')?.value || 2);
+
+        // Clinical Framingham-aligned weighted risk index heuristic
+        let score = 15;
+        if (age > 55) score += (age - 55) * 0.8;
+        if (sex === 1) score += 6;
+        if (cp === 0) score += 18; // Typical angina
+        else if (cp === 1) score += 10;
+        else if (cp === 2) score += 5;
+        if (bp > 130) score += (bp - 130) * 0.35;
+        if (chol > 200) score += (chol - 200) * 0.15;
+        if (fbs === 1) score += 8;
+        if (thalach < 130) score += (130 - thalach) * 0.3;
+        if (exang === 1) score += 14;
+        if (oldpeak > 1.0) score += oldpeak * 6;
+        if (ca > 0) score += ca * 10;
+        if (thal === 3) score += 12; // Reversible defect
+
+        score = Math.min(Math.max(Math.round(score), 5), 98);
+
+        const bar = document.getElementById('heartRiskProgressBar');
+        const badge = document.getElementById('heartRiskBadge');
+        const scoreText = document.getElementById('heartRiskScoreText');
+        const insight = document.getElementById('heartRiskInsight');
+
+        if (bar) bar.style.width = score + '%';
+        if (scoreText) scoreText.textContent = score + '%';
+
+        if (score >= 65) {
+            badge.className = 'diagno-badge diagno-badge-rose';
+            badge.textContent = 'Elevated Risk Range';
+            if (bar) bar.style.background = '#ef4444';
+            if (insight) insight.textContent = 'High cardiac risk factors detected. Formal assessment advised.';
+        } else if (score >= 40) {
+            badge.className = 'diagno-badge diagno-badge-amber';
+            badge.textContent = 'Moderate Risk Range';
+            if (bar) bar.style.background = '#f59e0b';
+            if (insight) insight.textContent = 'Borderline parameters present. Review recommended.';
+        } else {
+            badge.className = 'diagno-badge diagno-badge-emerald';
+            badge.textContent = 'Optimal Range';
+            if (bar) bar.style.background = '#10b981';
+            if (insight) insight.textContent = 'Vitals generally within healthy baseline ranges.';
+        }
+    }
+
+    function fillNormalSample() {
+        const vals = { f_age:45, f_trestbps:118, f_chol:185, f_thalach:172, f_oldpeak:0.2 };
+        document.getElementById("f_sex").value = "1";
+        document.getElementById("f_cp").value = "2";
+        document.getElementById("f_fbs").value = "0";
+        document.getElementById("f_restecg").value = "0";
+        document.getElementById("f_exang").value = "0";
+        document.getElementById("f_slope").value = "0";
+        document.getElementById("f_ca").value = "0";
+        document.getElementById("f_thal").value = "1";
+        Object.entries(vals).forEach(([id, v]) => {
+            document.getElementById(id).value = v;
+            const sl = document.getElementById(id + "_range");
+            if (sl) sl.value = v;
+        });
+        updateLiveHeartRisk();
+    }
+
+    function fillElevatedSample() {
+        const vals = { f_age:64, f_trestbps:160, f_chol:286, f_thalach:108, f_oldpeak:2.8 };
+        document.getElementById("f_sex").value = "1";
+        document.getElementById("f_cp").value = "0";
+        document.getElementById("f_fbs").value = "1";
+        document.getElementById("f_restecg").value = "1";
+        document.getElementById("f_exang").value = "1";
+        document.getElementById("f_slope").value = "1";
+        document.getElementById("f_ca").value = "2";
+        document.getElementById("f_thal").value = "3";
+        Object.entries(vals).forEach(([id, v]) => {
+            document.getElementById(id).value = v;
+            const sl = document.getElementById(id + "_range");
+            if (sl) sl.value = v;
+        });
+        updateLiveHeartRisk();
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        document.querySelectorAll('#heartForm select, #heartForm input').forEach(el => {
+            el.addEventListener('change', updateLiveHeartRisk);
+            el.addEventListener('input', updateLiveHeartRisk);
+        });
+        updateLiveHeartRisk();
+    });
+</script>
+{% endblock %}

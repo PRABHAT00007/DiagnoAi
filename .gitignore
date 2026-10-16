@@ -1,0 +1,40 @@
+# Virtual Environments
+venv/
+env/
+ENV/
+.env
+
+# Python Cache & Bytecode
+__pycache__/
+*.py[cod]
+*$py.class
+*.log
+
+# IDE & Editor Settings
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Database & Local Backups
+*.sqlite3
+*.sqlite3-journal
+*.final_checkpoint_backup
+
+# Uploaded Media & User Session Files (Keep directory structure)
+media/*
+!media/.gitkeep
+
+# Machine Learning & Deep Learning Model Weights (Hosted via Google Drive)
+*.h5
+*.hdf5
+*.pt
+*.pth
+*.pkl
+*.pickle
+*.joblib
+*.onnx
+models/*.h5
+models/*.pt
+models/*.pkl
+models/DrugRecommendationDataUCL.csv

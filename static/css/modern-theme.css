@@ -1,0 +1,2229 @@
+/* ==========================================================================
+   DIAGNOAI MODERN DESIGN SYSTEM - CORE STYLESHEET
+   Initial Modern Clinical Design System (Clinical Blue, Cyan & PACS Dark Mode)
+   ========================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap');
+
+:root {
+    /* Primary Medical Blue Palette */
+    --primary-50: #eff6ff;
+    --primary-100: #dbeafe;
+    --primary-200: #bfdbfe;
+    --primary-300: #93c5fd;
+    --primary-400: #60a5fa;
+    --primary-500: #3b82f6;
+    --primary-600: #2563eb;
+    --primary-700: #1d4ed8;
+    --primary-800: #1e40af;
+    --primary-900: #1e3a8a;
+
+    /* Secondary Medical Cyan / Teal */
+    --cyan-50: #ecfeff;
+    --cyan-100: #cffafe;
+    --cyan-200: #a5f3fc;
+    --cyan-300: #67e8f9;
+    --cyan-400: #22d3ee;
+    --cyan-500: #06b6d4;
+    --cyan-600: #0891b2;
+    --cyan-700: #0e7490;
+
+    /* Accent & Status Colors */
+    --emerald-400: #34d399;
+    --emerald-500: #10b981;
+    --emerald-600: #059669;
+
+    --rose-400: #fb7185;
+    --rose-500: #f43f5e;
+    --rose-600: #e11d48;
+
+    --amber-400: #fbbf24;
+    --amber-500: #f59e0b;
+
+    /* Neutral & Backgrounds */
+    --bg-main: #f8fafc;
+    --bg-mesh: radial-gradient(at 0% 0%, rgba(37, 99, 235, 0.08) 0px, transparent 50%),
+               radial-gradient(at 100% 0%, rgba(6, 182, 212, 0.08) 0px, transparent 50%),
+               radial-gradient(at 50% 100%, rgba(16, 185, 129, 0.05) 0px, transparent 50%);
+    
+    --surface-card: #ffffff;
+    --surface-card-hover: #ffffff;
+    --surface-glass: rgba(255, 255, 255, 0.85);
+    --surface-glass-border: rgba(226, 232, 240, 0.8);
+    
+    /* Text Colors */
+    --text-primary: #0f172a;
+    --text-secondary: #475569;
+    --text-muted: #94a3b8;
+    --text-inverted: #ffffff;
+    
+    /* Shadows & Glows */
+    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.07), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+    --shadow-lg: 0 10px 25px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -4px rgba(0, 0, 0, 0.04);
+    --shadow-xl: 0 20px 35px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+    --shadow-glow-blue: 0 0 25px rgba(37, 99, 235, 0.25);
+    --shadow-glow-cyan: 0 0 25px rgba(6, 182, 212, 0.25);
+
+    /* Radii */
+    --radius-sm: 8px;
+    --radius-md: 12px;
+    --radius-lg: 18px;
+    --radius-xl: 24px;
+    --radius-full: 9999px;
+
+    /* Transitions */
+    --transition-fast: 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-normal: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-slow: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ==========================================================================
+   PACS HIGH-CONTRAST DARK MODE THEME PALETTE
+   ========================================================================== */
+html[data-theme="dark"],
+[data-theme="dark"] {
+    --bg-main: #0a0e1a;
+    --bg-mesh: radial-gradient(at 0% 0%, rgba(37, 99, 235, 0.18) 0px, transparent 55%),
+               radial-gradient(at 100% 0%, rgba(6, 182, 212, 0.18) 0px, transparent 55%),
+               radial-gradient(at 50% 100%, rgba(16, 185, 129, 0.12) 0px, transparent 55%);
+    
+    --surface-card: #111827;
+    --surface-card-hover: #172033;
+    --surface-glass: rgba(17, 24, 39, 0.90);
+    --surface-glass-border: rgba(255, 255, 255, 0.12);
+    
+    --text-primary: #f8fafc;
+    --text-secondary: #cbd5e1;
+    --text-muted: #94a3b8;
+    --text-inverted: #0f172a;
+    
+    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 2px 4px -2px rgba(0, 0, 0, 0.3);
+    --shadow-lg: 0 10px 25px -3px rgba(0, 0, 0, 0.5), 0 4px 6px -4px rgba(0, 0, 0, 0.3);
+    --shadow-xl: 0 20px 35px -5px rgba(0, 0, 0, 0.6), 0 8px 10px -6px rgba(0, 0, 0, 0.4);
+    --shadow-glow-blue: 0 0 30px rgba(59, 130, 246, 0.35);
+    --shadow-glow-cyan: 0 0 30px rgba(34, 211, 238, 0.35);
+}
+
+html[data-theme="dark"] body {
+    background-color: #0a0e1a !important;
+    background-image: var(--bg-mesh) !important;
+    color: #f8fafc !important;
+}
+
+html[data-theme="dark"] .diagno-navbar {
+    background: rgba(15, 23, 42, 0.94) !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.12) !important;
+}
+
+html[data-theme="dark"] .diagno-dropdown-menu,
+html[data-theme="dark"] .scan-display-card,
+html[data-theme="dark"] .diagno-card,
+html[data-theme="dark"] .disease-grid-card,
+html[data-theme="dark"] .step-card,
+html[data-theme="dark"] .form-card,
+html[data-theme="dark"] .auth-card,
+html[data-theme="dark"] .bmi-card,
+html[data-theme="dark"] .service-card,
+html[data-theme="dark"] .service-card-lg,
+html[data-theme="dark"] .stat-card,
+html[data-theme="dark"] .diagnostic-hub-card,
+html[data-theme="dark"] .hub-quick-item,
+html[data-theme="dark"] .feature-box,
+html[data-theme="dark"] .recorder-card,
+html[data-theme="dark"] .spotlight-modal,
+html[data-theme="dark"] .doc-card,
+html[data-theme="dark"] .doctor-card,
+html[data-theme="dark"] .tele-search-card,
+html[data-theme="dark"] .voice-card,
+html[data-theme="dark"] .clinical-card,
+html[data-theme="dark"] .results-accordion-card,
+html[data-theme="dark"] .modal-glass,
+html[data-theme="dark"] .modal-content,
+html[data-theme="dark"] .hero-triage-card,
+html[data-theme="dark"] .card {
+    background: #111827 !important;
+    color: #f8fafc !important;
+    border-color: rgba(255, 255, 255, 0.12) !important;
+    box-shadow: 0 10px 25px -3px rgba(0, 0, 0, 0.5) !important;
+}
+
+html[data-theme="dark"] .disease-grid-card.bento-hero {
+    background: linear-gradient(135deg, #111827 0%, #1e293b 100%) !important;
+    border-color: rgba(59, 130, 246, 0.35) !important;
+}
+
+html[data-theme="dark"] .filter-chip {
+    background: #111827 !important;
+    border-color: rgba(255, 255, 255, 0.15) !important;
+    color: #cbd5e1 !important;
+}
+
+html[data-theme="dark"] .filter-chip:hover,
+html[data-theme="dark"] .filter-chip.active {
+    background: var(--primary-600) !important;
+    color: #ffffff !important;
+    border-color: var(--primary-600) !important;
+}
+
+html[data-theme="dark"] .telemetry-bar {
+    background: #111827 !important;
+    border-color: rgba(255, 255, 255, 0.15) !important;
+    color: #f8fafc !important;
+}
+
+html[data-theme="dark"] .triage-chip {
+    background: #1e293b !important;
+    border-color: rgba(255, 255, 255, 0.15) !important;
+    color: #cbd5e1 !important;
+}
+
+html[data-theme="dark"] .triage-chip:hover,
+html[data-theme="dark"] .triage-chip.selected {
+    background: var(--primary-600) !important;
+    border-color: var(--primary-500) !important;
+    color: #ffffff !important;
+}
+
+html[data-theme="dark"] .bg-light,
+html[data-theme="dark"] .bg-white {
+    background-color: #1e293b !important;
+    color: #f8fafc !important;
+}
+
+html[data-theme="dark"] .quick-tab-btn {
+    color: #cbd5e1 !important;
+}
+
+html[data-theme="dark"] .quick-tab-btn.active {
+    background: var(--primary-600) !important;
+    color: #ffffff !important;
+}
+
+html[data-theme="dark"] .vision-header-card {
+    background: linear-gradient(135deg, rgba(37, 99, 235, 0.15), rgba(6, 182, 212, 0.10)) !important;
+    border-color: rgba(255, 255, 255, 0.15) !important;
+}
+
+html[data-theme="dark"] .hub-quick-item:hover,
+html[data-theme="dark"] .service-card:hover {
+    background: #1e293b !important;
+    border-color: var(--primary-500) !important;
+}
+
+html[data-theme="dark"] .diagno-brand-title {
+    background: linear-gradient(135deg, #60a5fa, #38bdf8) !important;
+    -webkit-background-clip: text !important;
+    -webkit-text-fill-color: transparent !important;
+}
+
+html[data-theme="dark"] .form-control,
+html[data-theme="dark"] .form-select,
+html[data-theme="dark"] input,
+html[data-theme="dark"] select,
+html[data-theme="dark"] textarea {
+    background-color: #1e293b !important;
+    color: #f8fafc !important;
+    border-color: rgba(255, 255, 255, 0.18) !important;
+}
+
+html[data-theme="dark"] input::placeholder,
+html[data-theme="dark"] textarea::placeholder {
+    color: #94a3b8 !important;
+}
+
+html[data-theme="dark"] .table {
+    color: #cbd5e1 !important;
+    border-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+html[data-theme="dark"] .table > :not(caption) > * > * {
+    background-color: transparent !important;
+    color: inherit !important;
+}
+
+html[data-theme="dark"] .btn-diagno-outline {
+    background: #111827 !important;
+    border-color: rgba(255, 255, 255, 0.22) !important;
+    color: #f8fafc !important;
+}
+
+html[data-theme="dark"] .btn-diagno-outline:hover {
+    background: rgba(255, 255, 255, 0.12) !important;
+    color: #38bdf8 !important;
+}
+
+html[data-theme="dark"] .diagno-footer {
+    background: #070a12 !important;
+    border-top: 1px solid rgba(255, 255, 255, 0.1) !important;
+}
+
+html[data-theme="dark"] .diagno-cmd-box {
+    background: #111827 !important;
+    border-color: rgba(255, 255, 255, 0.15) !important;
+    color: #f8fafc !important;
+}
+
+html[data-theme="dark"] .diagno-cmd-item:hover,
+html[data-theme="dark"] .diagno-cmd-item.active {
+    background: #1e293b !important;
+}
+
+html[data-theme="dark"] .diagno-dock-btn {
+    background: #111827 !important;
+    border-color: rgba(255, 255, 255, 0.15) !important;
+    color: #f8fafc !important;
+}
+
+/* ================= RESET & GLOBAL ================= */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+    font-size: 16px;
+}
+
+body {
+    font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    color: var(--text-primary);
+    background-color: var(--bg-main);
+    background-image: var(--bg-mesh);
+    background-attachment: fixed;
+    line-height: 1.6;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    -webkit-font-smoothing: antialiased;
+}
+
+a {
+    color: inherit;
+    text-decoration: none;
+    transition: var(--transition-fast);
+}
+
+/* ================= MODERN NAVBAR ================= */
+.diagno-navbar {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    background: rgba(255, 255, 255, 0.88);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--surface-glass-border);
+    transition: var(--transition-normal);
+}
+
+.diagno-nav-container {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 0.85rem 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+}
+
+.diagno-brand {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    text-decoration: none;
+}
+
+.diagno-brand-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: var(--radius-md);
+    background: linear-gradient(135deg, var(--primary-600), var(--cyan-500));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    box-shadow: var(--shadow-glow-blue);
+    position: relative;
+    overflow: hidden;
+}
+
+.diagno-brand-icon::after {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(45deg, transparent, rgba(255,255,255,0.3), transparent);
+    transform: rotate(45deg);
+    animation: shine 4s infinite;
+}
+
+.diagno-brand-text {
+    display: flex;
+    flex-direction: column;
+}
+
+.diagno-brand-title {
+    font-size: 1.35rem;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+    background: linear-gradient(135deg, var(--primary-700), var(--primary-900));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    line-height: 1.1;
+}
+
+.diagno-brand-subtitle {
+    font-size: 0.68rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--cyan-600);
+}
+
+.diagno-nav-menu {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    list-style: none;
+}
+
+.diagno-nav-item {
+    position: relative;
+}
+
+.diagno-nav-link {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.55rem 0.9rem;
+    border-radius: var(--radius-sm);
+    font-size: 0.92rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    transition: var(--transition-fast);
+}
+
+.diagno-nav-link:hover, .diagno-nav-link.active {
+    color: var(--primary-600);
+    background: rgba(37, 99, 235, 0.06);
+}
+
+/* Dropdown Menu */
+.diagno-dropdown-menu {
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 0;
+    min-width: 270px;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(20px);
+    border: 1px solid var(--surface-glass-border);
+    border-radius: var(--radius-md);
+    padding: 0.5rem;
+    box-shadow: var(--shadow-xl);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(10px);
+    transition: var(--transition-normal);
+    list-style: none;
+    z-index: 1010;
+}
+
+.diagno-nav-item:hover .diagno-dropdown-menu {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.diagno-dropdown-item a {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.6rem 0.8rem;
+    border-radius: var(--radius-sm);
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+}
+
+.diagno-dropdown-item a:hover {
+    background: var(--primary-50);
+    color: var(--primary-700);
+    transform: translateX(4px);
+}
+
+.diagno-dropdown-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    background: var(--primary-100);
+    color: var(--primary-700);
+}
+
+.diagno-nav-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+/* Mobile Toggle */
+.diagno-mobile-toggle {
+    display: none;
+    background: transparent;
+    border: 1px solid var(--surface-glass-border);
+    border-radius: var(--radius-sm);
+    padding: 0.5rem;
+    color: var(--text-primary);
+    cursor: pointer;
+    font-size: 1.25rem;
+}
+
+/* ================= MODERN BUTTONS ================= */
+.btn-diagno {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.65rem 1.35rem;
+    border-radius: var(--radius-md);
+    font-size: 0.92rem;
+    font-weight: 600;
+    border: 1px solid transparent;
+    cursor: pointer;
+    transition: var(--transition-normal);
+    text-align: center;
+}
+
+.btn-diagno-primary {
+    background: linear-gradient(135deg, var(--primary-600) 0%, var(--primary-700) 100%);
+    color: white !important;
+    box-shadow: 0 4px 14px rgba(37, 99, 235, 0.3);
+}
+
+.btn-diagno-primary:hover {
+    background: linear-gradient(135deg, var(--primary-500) 0%, var(--primary-600) 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(37, 99, 235, 0.4);
+    color: white !important;
+}
+
+.btn-diagno-cyan,
+.btn-diagno-blue {
+    background: linear-gradient(135deg, var(--primary-600) 0%, var(--primary-700) 100%);
+    color: white !important;
+    box-shadow: 0 4px 14px rgba(37, 99, 235, 0.3);
+}
+
+.btn-diagno-cyan:hover,
+.btn-diagno-blue:hover {
+    background: linear-gradient(135deg, var(--primary-500) 0%, var(--primary-600) 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(37, 99, 235, 0.4);
+    color: white !important;
+}
+
+.btn-diagno:disabled,
+.btn-diagno.disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+    pointer-events: none;
+    box-shadow: none !important;
+    transform: none !important;
+}
+
+.btn-diagno-outline {
+    background: white;
+    border: 1px solid #cbd5e1;
+    color: var(--text-primary);
+}
+
+.btn-diagno-outline:hover {
+    background: var(--primary-50);
+    border-color: var(--primary-300);
+    color: var(--primary-700);
+    transform: translateY(-2px);
+}
+
+.btn-diagno-success {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    color: white !important;
+    box-shadow: 0 4px 14px rgba(16, 185, 129, 0.3);
+}
+
+.btn-diagno-lg {
+    padding: 0.85rem 1.8rem;
+    font-size: 1.05rem;
+    border-radius: var(--radius-lg);
+}
+
+/* ================= MODERN CARDS & SURFACES ================= */
+.diagno-card,
+.diagnostic-hub-card,
+.disease-grid-card,
+.step-card,
+.doc-card,
+.tele-search-card,
+.scan-display-card,
+.voice-card,
+.clinical-card,
+.results-accordion-card,
+.card {
+    background: var(--surface-card);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid var(--surface-glass-border);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-lg);
+    transition: var(--transition-normal);
+    position: relative;
+    overflow: hidden;
+    color: var(--text-primary);
+}
+
+.diagno-card:hover,
+.disease-grid-card:hover,
+.step-card:hover,
+.doc-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-xl);
+    border-color: rgba(37, 99, 235, 0.3);
+}
+
+.diagno-card-body,
+.disease-card-body {
+    padding: 2rem;
+}
+
+.disease-card-img-wrap {
+    height: 190px;
+    position: relative;
+    overflow: hidden;
+    background: #0f172a;
+}
+
+.disease-card-img-wrap img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+}
+
+.disease-grid-card:hover .disease-card-img-wrap img {
+    transform: scale(1.05);
+}
+
+/* Hub quick items */
+.hub-quick-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.9rem;
+    border-radius: var(--radius-md);
+    background: var(--bg-main);
+    border: 1px solid var(--surface-glass-border);
+    margin-bottom: 0.75rem;
+    transition: var(--transition-fast);
+    text-decoration: none;
+    color: var(--text-primary);
+}
+
+.hub-quick-item:hover {
+    background: white;
+    border-color: var(--primary-300);
+    transform: translateX(6px);
+    box-shadow: var(--shadow-sm);
+    color: var(--text-primary);
+}
+
+.hub-quick-icon {
+    width: 42px;
+    height: 42px;
+    border-radius: var(--radius-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+}
+
+/* Timeline Step Badges */
+.step-num-badge {
+    width: 48px;
+    height: 48px;
+    border-radius: var(--radius-md);
+    background: linear-gradient(135deg, var(--primary-600), var(--cyan-500));
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 1.25rem;
+    margin-bottom: 1.5rem;
+    box-shadow: var(--shadow-glow-blue);
+}
+
+/* Telehealth Banner */
+.telehealth-banner {
+    background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 100%);
+    border-radius: var(--radius-xl);
+    padding: 4rem 3rem;
+    color: white;
+    position: relative;
+    overflow: hidden;
+    box-shadow: var(--shadow-xl);
+}
+
+.telehealth-banner::after {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -20%;
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, rgba(6, 182, 212, 0.25) 0%, transparent 70%);
+    pointer-events: none;
+}
+
+/* ================= BADGES & PILLS ================= */
+.diagno-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.3rem 0.75rem;
+    border-radius: var(--radius-full);
+    font-size: 0.78rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+}
+
+.diagno-badge-blue {
+    background: var(--primary-100);
+    color: var(--primary-700);
+}
+
+.diagno-badge-cyan {
+    background: var(--cyan-100);
+    color: var(--cyan-700);
+}
+
+.diagno-badge-emerald {
+    background: #d1fae5;
+    color: #065f46;
+}
+
+.diagno-badge-rose {
+    background: #ffe4e6;
+    color: #9f1239;
+}
+
+.diagno-badge-amber {
+    background: #fef3c7;
+    color: #92400e;
+}
+
+/* Status Indicator Dot */
+.status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: var(--emerald-500);
+    box-shadow: 0 0 10px var(--emerald-500);
+    animation: pulse-dot 2s infinite;
+}
+
+@keyframes pulse-dot {
+    0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+    70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(16, 185, 129, 0); }
+    100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+}
+
+/* Filter Chips & Symptom Preset Chips */
+.filter-chip,
+.symptom-chip-preset,
+.slot-label-btn {
+    padding: 0.55rem 1.25rem;
+    border-radius: var(--radius-full);
+    font-size: 0.88rem;
+    font-weight: 600;
+    background: white;
+    border: 1px solid var(--surface-glass-border);
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: var(--transition-fast);
+}
+
+.filter-chip:hover,
+.filter-chip.active,
+.symptom-chip-preset:hover,
+.slot-label-btn:hover {
+    background: var(--primary-600) !important;
+    color: white !important;
+    border-color: var(--primary-600) !important;
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
+}
+
+.symptom-dropdown {
+    background: white;
+    border: 1px solid var(--surface-glass-border);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-xl);
+}
+
+.symptom-dropdown-item {
+    color: var(--text-primary);
+    padding: 0.6rem 1rem;
+    cursor: pointer;
+    transition: var(--transition-fast);
+}
+
+.symptom-dropdown-item:hover {
+    background: var(--primary-50);
+    color: var(--primary-700);
+}
+
+.selected-tokens-box,
+.transcript-bubble {
+    background: var(--primary-50);
+    border: 1px solid var(--primary-100);
+    border-radius: var(--radius-md);
+    padding: 1rem;
+    color: var(--text-primary);
+}
+
+/* ================= MODERN DROPZONE & SCANNER ================= */
+.dropzone-container,
+.diagno-dropzone {
+    border: 2px dashed #cbd5e1;
+    background: rgba(248, 250, 252, 0.8);
+    border-radius: var(--radius-xl);
+    padding: 2.5rem 1.5rem;
+    text-align: center;
+    cursor: pointer;
+    transition: var(--transition-normal);
+    position: relative;
+    overflow: hidden;
+}
+
+.dropzone-container:hover,
+.dropzone-container.dragover,
+.diagno-dropzone:hover,
+.diagno-dropzone.drag-active {
+    border-color: var(--primary-500);
+    background: rgba(37, 99, 235, 0.04);
+    transform: scale(1.01);
+}
+
+.dropzone-icon-wrap,
+.dropzone-icon-circle {
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    background: var(--primary-100);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--primary-600);
+    font-size: 2rem;
+    margin-bottom: 1.25rem;
+    transition: var(--transition-normal);
+}
+
+.dropzone-container:hover .dropzone-icon-wrap,
+.diagno-dropzone:hover .dropzone-icon-circle {
+    transform: translateY(-4px) scale(1.05);
+    background: var(--primary-600);
+    color: white;
+}
+
+.diagno-dropzone input[type="file"] {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    cursor: pointer;
+    z-index: 10;
+}
+
+.preview-box {
+    background: #f1f5f9;
+    border: 1px solid #e2e8f0;
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    min-height: 200px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Scanning Animation Overlay */
+.scanner-viewport {
+    position: relative;
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    display: inline-block;
+    max-width: 100%;
+}
+
+.scanner-beam {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 4px;
+    background: linear-gradient(90deg, transparent, var(--cyan-400), var(--primary-500), transparent);
+    box-shadow: 0 0 15px var(--cyan-400), 0 0 30px rgba(6, 182, 212, 0.6);
+    z-index: 10;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.scanner-viewport.scanning .scanner-beam {
+    opacity: 1;
+    animation: scanAnimation 2s ease-in-out infinite alternate;
+}
+
+@keyframes scanAnimation {
+    0% { top: 0%; }
+    100% { top: 96%; }
+}
+
+@keyframes shine {
+    0% { transform: translateX(-100%) rotate(45deg); }
+    20%, 100% { transform: translateX(100%) rotate(45deg); }
+}
+
+/* ================= MODERN FORM INPUTS ================= */
+.diagno-input-group {
+    margin-bottom: 1.5rem;
+    text-align: left;
+}
+
+.diagno-label {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 0.88rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 0.5rem;
+}
+
+.diagno-input,
+.diagno-select,
+.form-control,
+.form-select,
+.symptom-search-input {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    font-size: 0.95rem;
+    font-family: inherit;
+    color: var(--text-primary);
+    background: #ffffff;
+    border: 1.5px solid #cbd5e1;
+    border-radius: var(--radius-md);
+    transition: var(--transition-fast);
+    outline: none;
+}
+
+.diagno-input:focus,
+.diagno-select:focus,
+.form-control:focus,
+.form-select:focus,
+.symptom-search-input:focus {
+    border-color: var(--primary-600);
+    box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.15);
+    background-color: #ffffff;
+    color: var(--text-primary);
+}
+
+.diagno-input::placeholder,
+.symptom-search-input::placeholder,
+.form-control::placeholder {
+    color: var(--text-muted);
+}
+
+.diagno-input-helper {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    margin-top: 0.35rem;
+}
+
+/* ================= RADIAL RISK METER ================= */
+.risk-meter-wrapper {
+    position: relative;
+    width: 180px;
+    height: 180px;
+    margin: 0 auto 1.5rem;
+}
+
+.risk-meter-circle {
+    transform: rotate(-90deg);
+    transform-origin: 50% 50%;
+}
+
+.risk-meter-bg {
+    fill: none;
+    stroke: #e2e8f0;
+    stroke-width: 12;
+}
+
+.risk-meter-progress {
+    fill: none;
+    stroke-width: 12;
+    stroke-linecap: round;
+    transition: stroke-dashoffset 1.5s ease;
+}
+
+.risk-meter-value {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+}
+
+.risk-meter-num {
+    font-size: 2.25rem;
+    font-weight: 800;
+    line-height: 1;
+    color: var(--primary-700);
+}
+
+.risk-meter-label {
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--text-muted);
+}
+
+/* ================= ACCORDION & LISTS ================= */
+.accordion-button {
+    background-color: #ffffff;
+    color: var(--text-primary);
+    border-color: var(--surface-glass-border);
+}
+
+.accordion-button:not(.collapsed) {
+    background-color: var(--primary-50);
+    color: var(--primary-700);
+}
+
+.accordion-body {
+    background-color: #ffffff;
+    color: var(--text-primary);
+}
+
+.list-group-item {
+    background-color: #ffffff;
+    color: var(--text-primary);
+    border-color: #e2e8f0;
+}
+
+/* ================= BEFORE / AFTER IMAGE SLIDER ================= */
+.diagno-slider-container {
+    position: relative;
+    width: 100%;
+    height: 380px;
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    user-select: none;
+    -webkit-user-select: none;
+    background: #0f172a;
+    box-shadow: var(--shadow-xl);
+}
+
+.slider-img-base,
+.slider-img-before {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    pointer-events: none;
+}
+
+.slider-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 50%;
+    height: 100%;
+    overflow: hidden;
+    z-index: 2;
+}
+
+.slider-overlay .slider-img-before {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+.slider-handle {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 50%;
+    width: 4px;
+    background: white;
+    box-shadow: 0 0 12px rgba(0, 0, 0, 0.6);
+    cursor: ew-resize;
+    z-index: 10;
+    transform: translateX(-50%);
+}
+
+.slider-handle-btn {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: white;
+    color: #0f172a;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    font-size: 0.8rem;
+    font-weight: 800;
+}
+
+.slider-badge-label {
+    position: absolute;
+    bottom: 12px;
+    padding: 4px 10px;
+    border-radius: var(--radius-sm);
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: white;
+    background: rgba(15, 23, 42, 0.75);
+    backdrop-filter: blur(8px);
+    z-index: 5;
+    pointer-events: none;
+}
+
+.slider-label-left { left: 12px; }
+.slider-label-right { right: 12px; }
+
+/* ================= MODERN FOOTER ================= */
+.diagno-footer {
+    margin-top: auto;
+    background: #0f172a;
+    color: #94a3b8;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    padding: 4rem 1.5rem 2rem;
+}
+
+.diagno-footer-container {
+    max-width: 1280px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1.5fr;
+    gap: 3rem;
+    margin-bottom: 3rem;
+}
+
+.diagno-footer-brand h4 {
+    color: white;
+    font-size: 1.4rem;
+    font-weight: 800;
+    margin-bottom: 0.75rem;
+}
+
+.diagno-footer-col h5 {
+    color: white;
+    font-size: 0.95rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 1.25rem;
+}
+
+.diagno-footer-col ul {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.65rem;
+}
+
+.diagno-footer-col a:hover {
+    color: var(--cyan-400);
+    transform: translateX(3px);
+}
+
+.diagno-footer-bottom {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding-top: 2rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 1rem;
+    font-size: 0.85rem;
+}
+
+/* ================= RESPONSIVE ================= */
+@media (max-width: 1024px) {
+    .diagno-footer-container {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+@media (max-width: 768px) {
+    .diagno-nav-menu, .diagno-nav-actions {
+        display: none;
+    }
+
+    .diagno-mobile-toggle {
+        display: block;
+    }
+
+    .diagno-nav-menu.mobile-open {
+        display: flex;
+        flex-direction: column;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        width: 100%;
+        background: var(--surface-glass);
+        backdrop-filter: blur(20px);
+        padding: 1.5rem;
+        border-bottom: 1px solid var(--surface-glass-border);
+        box-shadow: var(--shadow-xl);
+        gap: 1rem;
+    }
+
+    .diagno-dropdown-menu {
+        position: static;
+        opacity: 1;
+        visibility: visible;
+        transform: none;
+        box-shadow: none;
+        background: var(--bg-main);
+        margin-top: 0.5rem;
+    }
+
+    .diagno-footer-container {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+    }
+}
+
+/* ==========================================================================
+   PACS HIGH-CONTRAST DARK MODE THEME
+   ========================================================================== */
+
+[data-theme="dark"] {
+    --bg-main: #0b1120;
+    --bg-mesh: radial-gradient(at 0% 0%, rgba(37, 99, 235, 0.15) 0px, transparent 50%),
+               radial-gradient(at 100% 0%, rgba(6, 182, 212, 0.15) 0px, transparent 50%),
+               radial-gradient(at 50% 100%, rgba(16, 185, 129, 0.08) 0px, transparent 50%);
+    
+    --surface-card: #111827;
+    --surface-card-hover: #1e293b;
+    --surface-glass: rgba(17, 24, 39, 0.85);
+    --surface-glass-border: rgba(51, 65, 85, 0.8);
+    
+    --text-primary: #f8fafc;
+    --text-secondary: #94a3b8;
+    --text-muted: #64748b;
+    --text-inverted: #0f172a;
+    
+    --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.5);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 2px 4px -2px rgba(0, 0, 0, 0.3);
+    --shadow-lg: 0 10px 25px -3px rgba(0, 0, 0, 0.6), 0 4px 6px -4px rgba(0, 0, 0, 0.4);
+    --shadow-xl: 0 20px 35px -5px rgba(0, 0, 0, 0.7), 0 8px 10px -6px rgba(0, 0, 0, 0.5);
+}
+
+[data-theme="dark"] body {
+    background-color: #0b1120 !important;
+    color: #f8fafc !important;
+}
+
+[data-theme="dark"] .diagno-navbar {
+    background: rgba(11, 17, 32, 0.9) !important;
+    border-bottom-color: rgba(51, 65, 85, 0.6) !important;
+}
+
+[data-theme="dark"] .diagno-brand-title {
+    background: linear-gradient(135deg, #60a5fa, #93c5fd) !important;
+    -webkit-background-clip: text !important;
+    -webkit-text-fill-color: transparent !important;
+}
+
+[data-theme="dark"] .diagno-nav-link {
+    color: #94a3b8 !important;
+}
+
+[data-theme="dark"] .diagno-nav-link:hover,
+[data-theme="dark"] .diagno-nav-link.active {
+    color: #f8fafc !important;
+    background: rgba(255, 255, 255, 0.06) !important;
+}
+
+[data-theme="dark"] .diagno-dropdown-menu {
+    background: #111827 !important;
+    border-color: #334155 !important;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.7) !important;
+}
+
+[data-theme="dark"] .diagno-dropdown-item a {
+    color: #f8fafc !important;
+}
+
+[data-theme="dark"] .diagno-dropdown-item a:hover {
+    background: rgba(37, 99, 235, 0.18) !important;
+    color: #60a5fa !important;
+}
+
+[data-theme="dark"] .diagnostic-hub-card,
+[data-theme="dark"] .scan-display-card,
+[data-theme="dark"] .voice-card,
+[data-theme="dark"] .doc-card,
+[data-theme="dark"] .tele-search-card,
+[data-theme="dark"] .disease-grid-card,
+[data-theme="dark"] .step-card,
+[data-theme="dark"] .vision-header-card,
+[data-theme="dark"] .results-accordion-card,
+[data-theme="dark"] .modal-content,
+[data-theme="dark"] .card {
+    background: #111827 !important;
+    border-color: #1f2937 !important;
+    color: #f8fafc !important;
+}
+
+[data-theme="dark"] .hub-quick-item {
+    background: #1e293b !important;
+    border-color: #334155 !important;
+    color: #f8fafc !important;
+}
+
+[data-theme="dark"] .hub-quick-item:hover {
+    background: #334155 !important;
+    border-color: #60a5fa !important;
+    color: #ffffff !important;
+}
+
+[data-theme="dark"] .diagno-input,
+[data-theme="dark"] .diagno-select,
+[data-theme="dark"] .form-control,
+[data-theme="dark"] .form-select,
+[data-theme="dark"] .symptom-search-input {
+    background-color: #1e293b !important;
+    color: #f8fafc !important;
+    border-color: #334155 !important;
+}
+
+[data-theme="dark"] .diagno-input:focus,
+[data-theme="dark"] .diagno-select:focus,
+[data-theme="dark"] .form-control:focus,
+[data-theme="dark"] .form-select:focus,
+[data-theme="dark"] .symptom-search-input:focus {
+    background-color: #1e293b !important;
+    color: #f8fafc !important;
+    border-color: var(--cyan-400) !important;
+    box-shadow: 0 0 0 3px rgba(6, 182, 212, 0.25) !important;
+}
+
+[data-theme="dark"] .filter-chip,
+[data-theme="dark"] .symptom-chip-preset,
+[data-theme="dark"] .slot-label-btn {
+    background: #1e293b !important;
+    color: #cbd5e1 !important;
+    border-color: #334155 !important;
+}
+
+[data-theme="dark"] .filter-chip:hover,
+[data-theme="dark"] .filter-chip.active,
+[data-theme="dark"] .symptom-chip-preset:hover,
+[data-theme="dark"] .slot-label-btn:hover {
+    background: #2563eb !important;
+    color: #ffffff !important;
+    border-color: #2563eb !important;
+}
+
+[data-theme="dark"] .btn-diagno-outline {
+    background: rgba(255, 255, 255, 0.06) !important;
+    color: #f8fafc !important;
+    border-color: #334155 !important;
+}
+
+[data-theme="dark"] .btn-diagno-outline:hover {
+    background: #1e293b !important;
+    border-color: #60a5fa !important;
+    color: #60a5fa !important;
+}
+
+[data-theme="dark"] .dropzone-container,
+[data-theme="dark"] .diagno-dropzone {
+    background: #0f172a !important;
+    border-color: #334155 !important;
+}
+
+[data-theme="dark"] .dropzone-container:hover,
+[data-theme="dark"] .dropzone-container.dragover,
+[data-theme="dark"] .diagno-dropzone:hover,
+[data-theme="dark"] .diagno-dropzone.drag-active {
+    background: rgba(37, 99, 235, 0.1) !important;
+    border-color: #3b82f6 !important;
+}
+
+[data-theme="dark"] .preview-box {
+    background: #090d16 !important;
+    border-color: #1e293b !important;
+}
+
+[data-theme="dark"] .accordion-button {
+    background-color: #111827 !important;
+    color: #f8fafc !important;
+}
+
+[data-theme="dark"] .accordion-button:not(.collapsed) {
+    background-color: #1e293b !important;
+    color: #60a5fa !important;
+}
+
+[data-theme="dark"] .accordion-body {
+    background-color: #0f172a !important;
+    color: #f8fafc !important;
+}
+
+[data-theme="dark"] .list-group-item {
+    background-color: #111827 !important;
+    color: #f8fafc !important;
+    border-color: #1f2937 !important;
+}
+
+[data-theme="dark"] .diagno-footer {
+    background: #090d16 !important;
+    border-top-color: #1e293b !important;
+}
+
+/* Smooth transition between light and dark themes */
+body, .diagno-navbar, .scan-display-card, .voice-card, .doc-card, .tele-search-card,
+.disease-grid-card, .step-card, .diagnostic-hub-card, .btn-diagno, .modal-content,
+.diagno-input, .diagno-select, .form-control {
+    transition: background-color 0.25s ease, color 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+/* ==========================================================================
+   GLOBAL COMMAND PALETTE (CTRL + K / CMD + K)
+   ========================================================================== */
+.diagno-cmd-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 10500;
+    background: rgba(15, 23, 42, 0.65);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    display: none;
+    align-items: flex-start;
+    justify-content: center;
+    padding-top: 10vh;
+    animation: fadeInFast 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.diagno-cmd-backdrop.open {
+    display: flex;
+}
+
+.diagno-cmd-box {
+    width: 100%;
+    max-width: 640px;
+    background: #ffffff;
+    border-radius: var(--radius-xl);
+    border: 1px solid var(--surface-glass-border);
+    box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.3), 0 0 40px rgba(37, 99, 235, 0.15);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    max-height: 75vh;
+    animation: slideDownFast 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.diagno-cmd-header {
+    display: flex;
+    align-items: center;
+    padding: 1.1rem 1.4rem;
+    border-bottom: 1px solid var(--surface-glass-border);
+    gap: 0.85rem;
+    background: #ffffff;
+}
+
+.diagno-cmd-search-input {
+    flex: 1;
+    border: none;
+    outline: none;
+    font-size: 1.15rem;
+    font-weight: 500;
+    color: var(--text-primary);
+    background: transparent;
+    font-family: inherit;
+}
+
+.diagno-cmd-search-input::placeholder {
+    color: #94a3b8;
+}
+
+.diagno-cmd-results {
+    overflow-y: auto;
+    padding: 0.75rem 0.5rem;
+    max-height: 52vh;
+}
+
+.diagno-cmd-group-title {
+    font-size: 0.72rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #94a3b8;
+    padding: 0.6rem 1rem 0.3rem;
+}
+
+.diagno-cmd-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.75rem 1rem;
+    border-radius: var(--radius-md);
+    text-decoration: none;
+    color: var(--text-primary);
+    transition: background 0.15s ease, transform 0.1s ease;
+    cursor: pointer;
+    margin-bottom: 2px;
+}
+
+.diagno-cmd-item:hover,
+.diagno-cmd-item.active {
+    background: #eff6ff;
+    color: var(--primary-700);
+}
+
+.diagno-cmd-item-left {
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+}
+
+.diagno-cmd-item-icon {
+    width: 34px;
+    height: 34px;
+    border-radius: var(--radius-sm);
+    background: #f1f5f9;
+    color: var(--primary-600);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.diagno-cmd-item.active .diagno-cmd-item-icon,
+.diagno-cmd-item:hover .diagno-cmd-item-icon {
+    background: #dbeafe;
+    color: var(--primary-700);
+}
+
+.diagno-cmd-footer {
+    padding: 0.7rem 1.25rem;
+    background: #f8fafc;
+    border-top: 1px solid var(--surface-glass-border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 0.78rem;
+    color: #64748b;
+}
+
+.diagno-cmd-kbd {
+    background: #ffffff;
+    border: 1px solid #cbd5e1;
+    border-radius: 4px;
+    padding: 2px 6px;
+    font-size: 0.7rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 600;
+    color: #475569;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+}
+
+/* Dark Mode Command Palette */
+[data-theme="dark"] .diagno-cmd-box {
+    background: #0f172a;
+    border-color: #334155;
+    box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.7), 0 0 40px rgba(59, 130, 246, 0.2);
+}
+[data-theme="dark"] .diagno-cmd-header {
+    background: #0f172a;
+    border-bottom-color: #1e293b;
+}
+[data-theme="dark"] .diagno-cmd-search-input {
+    color: #f8fafc;
+}
+[data-theme="dark"] .diagno-cmd-item {
+    color: #f8fafc;
+}
+[data-theme="dark"] .diagno-cmd-item-icon {
+    background: #1e293b;
+    color: #60a5fa;
+}
+[data-theme="dark"] .diagno-cmd-item:hover,
+[data-theme="dark"] .diagno-cmd-item.active {
+    background: #1e293b;
+    color: #93c5fd;
+}
+[data-theme="dark"] .diagno-cmd-footer {
+    background: #090d16;
+    border-top-color: #1e293b;
+    color: #94a3b8;
+}
+[data-theme="dark"] .diagno-cmd-kbd {
+    background: #1e293b;
+    border-color: #475569;
+    color: #cbd5e1;
+}
+
+/* ==========================================================================
+   FLOATING DIAGNOSTIC QUICK DOCK
+   ========================================================================== */
+.diagno-quick-dock {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    z-index: 999;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.6rem;
+}
+
+.diagno-dock-trigger {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--primary-600), var(--cyan-500));
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: var(--shadow-xl), 0 0 20px rgba(37, 99, 235, 0.4);
+    cursor: pointer;
+    border: none;
+    transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.25s ease;
+}
+
+.diagno-dock-trigger:hover {
+    transform: scale(1.08) rotate(5deg);
+    box-shadow: var(--shadow-xl), 0 0 30px rgba(37, 99, 235, 0.6);
+}
+
+.diagno-dock-menu {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(12px) scale(0.95);
+    transition: opacity 0.2s ease, transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.diagno-quick-dock.expanded .diagno-dock-menu {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateY(0) scale(1);
+}
+
+.diagno-dock-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.6rem 1rem;
+    background: #ffffff;
+    border: 1px solid var(--surface-glass-border);
+    border-radius: var(--radius-full);
+    box-shadow: var(--shadow-lg);
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    text-decoration: none;
+    transition: transform 0.15s ease, background 0.15s ease, box-shadow 0.15s ease;
+    white-space: nowrap;
+}
+
+.diagno-dock-btn:hover {
+    background: #eff6ff;
+    color: var(--primary-700);
+    transform: translateX(-4px);
+    box-shadow: var(--shadow-xl);
+}
+
+[data-theme="dark"] .diagno-dock-btn {
+    background: #1e293b;
+    border-color: #334155;
+    color: #f8fafc;
+}
+[data-theme="dark"] .diagno-dock-btn:hover {
+    background: #2563eb;
+    color: #ffffff;
+}
+
+/* ==========================================================================
+   INTERACTIVE HUMAN ANATOMICAL BODY MAP
+   ========================================================================== */
+.body-map-wrapper {
+    background: var(--surface-card);
+    border: 1px solid var(--surface-glass-border);
+    border-radius: var(--radius-xl);
+    padding: 2rem 1.75rem;
+    box-shadow: var(--shadow-lg);
+    margin-bottom: 2rem;
+}
+
+.body-map-grid {
+    display: grid;
+    grid-template-columns: 240px 1fr;
+    gap: 2rem;
+    align-items: center;
+}
+
+@media (max-width: 860px) {
+    .body-map-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.body-svg-box {
+    position: relative;
+    width: 100%;
+    max-width: 220px;
+    margin: 0 auto;
+    background: radial-gradient(circle, rgba(37, 99, 235, 0.06) 0%, transparent 70%);
+    border-radius: var(--radius-xl);
+    padding: 1rem;
+    display: flex;
+    justify-content: center;
+}
+
+.body-organ-target {
+    cursor: pointer;
+    transition: filter 0.2s ease, opacity 0.2s ease, fill 0.2s ease;
+}
+
+.body-organ-target:hover {
+    filter: drop-shadow(0 0 10px rgba(37, 99, 235, 0.8));
+    opacity: 0.9;
+}
+
+.body-organ-target.active {
+    filter: drop-shadow(0 0 14px rgba(6, 182, 212, 1));
+}
+
+.body-organ-pill-cloud {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 1rem;
+}
+
+.body-organ-pill {
+    padding: 0.45rem 0.9rem;
+    border-radius: var(--radius-full);
+    font-size: 0.82rem;
+    font-weight: 700;
+    background: #f1f5f9;
+    color: #475569;
+    border: 1px solid transparent;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+}
+
+.body-organ-pill:hover,
+.body-organ-pill.active {
+    background: #2563eb;
+    color: #ffffff;
+    border-color: #1d4ed8;
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+}
+
+[data-theme="dark"] .body-organ-pill {
+    background: #1e293b;
+    color: #cbd5e1;
+}
+[data-theme="dark"] .body-organ-pill:hover,
+[data-theme="dark"] .body-organ-pill.active {
+    background: #3b82f6;
+    color: #ffffff;
+}
+
+/* ==========================================================================
+   LIVE AUDIO WAVEFORM VISUALIZER
+   ========================================================================== */
+.audio-waveform-container {
+    width: 100%;
+    max-width: 440px;
+    height: 70px;
+    margin: 1rem auto 0;
+    border-radius: var(--radius-md);
+    background: rgba(15, 23, 42, 0.04);
+    border: 1px solid var(--surface-glass-border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    position: relative;
+}
+
+[data-theme="dark"] .audio-waveform-container {
+    background: rgba(15, 23, 42, 0.6);
+}
+
+#audioWaveformCanvas {
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+
+/* ==========================================================================
+   IMAGE COMPARISON SLIDER (BEFORE / AFTER SPLIT SCREEN)
+   ========================================================================== */
+.image-compare-wrapper {
+    position: relative;
+    width: 100%;
+    max-width: 100%;
+    height: 380px;
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    user-select: none;
+    box-shadow: var(--shadow-lg);
+    background: #0f172a;
+}
+
+.image-compare-layer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.image-compare-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 50%;
+    overflow: hidden;
+    border-right: 2px solid #ffffff;
+    box-shadow: 2px 0 15px rgba(0, 0, 0, 0.5);
+}
+
+.image-compare-handle {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    background: #ffffff;
+    color: #2563eb;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.35);
+    cursor: ew-resize;
+    z-index: 10;
+    font-size: 1.1rem;
+    font-weight: 800;
+}
+
+.image-compare-tag {
+    position: absolute;
+    top: 1rem;
+    padding: 0.35rem 0.75rem;
+    border-radius: var(--radius-full);
+    font-size: 0.75rem;
+    font-weight: 800;
+    background: rgba(15, 23, 42, 0.75);
+    backdrop-filter: blur(8px);
+    color: #ffffff;
+    z-index: 5;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+}
+.image-compare-tag.left { left: 1rem; }
+.image-compare-tag.right { right: 1rem; }
+
+/* ==========================================================================
+   SYNCHRONIZED RANGE SLIDERS & LIVE RISK GAUGES
+   ========================================================================== */
+.sync-slider-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+}
+
+.sync-slider-row {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.sync-range-slider {
+    flex: 1;
+    -webkit-appearance: none;
+    appearance: none;
+    height: 6px;
+    border-radius: 3px;
+    background: #e2e8f0;
+    outline: none;
+    transition: background 0.15s ease;
+}
+
+.sync-range-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: #2563eb;
+    cursor: pointer;
+    box-shadow: 0 2px 6px rgba(37, 99, 235, 0.4);
+    transition: transform 0.1s ease;
+}
+
+.sync-range-slider::-webkit-slider-thumb:hover {
+    transform: scale(1.2);
+}
+
+[data-theme="dark"] .sync-range-slider {
+    background: #334155;
+}
+
+.live-risk-gauge-box {
+    background: var(--surface-card);
+    border: 1px solid var(--surface-glass-border);
+    border-radius: var(--radius-xl);
+    padding: 1.5rem;
+    box-shadow: var(--shadow-md);
+    text-align: center;
+}
+
+/* ==========================================================================
+   PRINT / PDF CLINICAL REPORT STYLES
+   ========================================================================== */
+@media print {
+    .diagno-navbar,
+    .diagno-footer,
+    .diagno-quick-dock,
+    .btn-diagno,
+    .demo-btn-group,
+    .dropzone-container,
+    #symptomSearchInput,
+    .btn-remove-token,
+    .no-print {
+        display: none !important;
+    }
+
+    body {
+        background: #ffffff !important;
+        color: #000000 !important;
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+
+    .form-container,
+    .vision-container,
+    .result-container,
+    .report-container {
+        max-width: 100% !important;
+        margin: 0 !important;
+        padding: 0.5in !important;
+        box-shadow: none !important;
+    }
+
+    .scan-display-card,
+    .form-card,
+    .result-card-main {
+        border: 1px solid #cbd5e1 !important;
+        box-shadow: none !important;
+        break-inside: avoid;
+    }
+
+    .print-only {
+        display: block !important;
+    }
+}
+
+.print-only {
+    display: none;
+}
+
+/* Keyframes */
+@keyframes fadeInFast {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes slideDownFast {
+    from { opacity: 0; transform: translateY(-16px) scale(0.98); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* ==========================================================================
+   DIAGNOAI MEDICAL CAMERA CAPTURE SYSTEM
+   ========================================================================== */
+.diagno-camera-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(15, 23, 42, 0.78);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    z-index: 10050;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    animation: fadeInFast 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.diagno-camera-card {
+    background: var(--surface-card);
+    border: 1px solid var(--surface-glass-border);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-2xl), 0 0 50px rgba(37, 99, 235, 0.15);
+    width: 100%;
+    max-width: 680px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    animation: slideDownFast 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.diagno-camera-header {
+    padding: 1.25rem 1.5rem;
+    border-bottom: 1px solid var(--surface-glass-border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: linear-gradient(135deg, rgba(37, 99, 235, 0.06), transparent);
+}
+
+.diagno-camera-body {
+    padding: 1.25rem 1.5rem;
+    background: var(--bg-main);
+}
+
+.diagno-camera-viewfinder {
+    position: relative;
+    width: 100%;
+    height: 380px;
+    background: #090d16;
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: inset 0 0 30px rgba(0, 0, 0, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.diagno-camera-viewfinder video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.diagno-camera-viewfinder canvas {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: none;
+}
+
+.camera-target-reticle {
+    position: absolute;
+    top: 12%;
+    left: 12%;
+    right: 12%;
+    bottom: 12%;
+    pointer-events: none;
+    border: 1px dashed rgba(255, 255, 255, 0.25);
+    border-radius: var(--radius-md);
+    transition: var(--transition-normal);
+}
+
+.reticle-corner {
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    border-color: #38bdf8;
+    border-style: solid;
+}
+
+.reticle-tl { top: -2px; left: -2px; border-width: 3px 0 0 3px; border-top-left-radius: 4px; }
+.reticle-tr { top: -2px; right: -2px; border-width: 3px 3px 0 0; border-top-right-radius: 4px; }
+.reticle-bl { bottom: -2px; left: -2px; border-width: 0 0 3px 3px; border-bottom-left-radius: 4px; }
+.reticle-br { bottom: -2px; right: -2px; border-width: 0 3px 3px 0; border-bottom-right-radius: 4px; }
+
+.reticle-center-cross {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 24px;
+    height: 24px;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+}
+
+.reticle-center-cross::before,
+.reticle-center-cross::after {
+    content: '';
+    position: absolute;
+    background: rgba(56, 189, 248, 0.6);
+}
+
+.reticle-center-cross::before {
+    top: 11px;
+    left: 0;
+    width: 24px;
+    height: 2px;
+}
+
+.reticle-center-cross::after {
+    left: 11px;
+    top: 0;
+    width: 2px;
+    height: 24px;
+}
+
+.camera-shutter-flash {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: #ffffff;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.15s ease-out;
+    z-index: 10;
+}
+
+.camera-shutter-flash.flashing {
+    opacity: 0.85;
+}
+
+.camera-status-msg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(15, 23, 42, 0.92);
+    color: #f8fafc;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    text-align: center;
+    z-index: 5;
+}
+
+.diagno-camera-footer {
+    padding: 1.25rem 1.5rem;
+    border-top: 1px solid var(--surface-glass-border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--surface-card);
+}
+
+.live-dot-pulse {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    background: #10b981;
+    border-radius: 50%;
+    margin-right: 6px;
+    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+    animation: livePulse 1.6s infinite;
+}
+
+@keyframes livePulse {
+    0% {
+        transform: scale(0.95);
+        box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+    }
+    70% {
+        transform: scale(1);
+        box-shadow: 0 0 0 7px rgba(16, 185, 129, 0);
+    }
+    100% {
+        transform: scale(0.95);
+        box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
+    }
+}
+
+.camera-quick-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.55rem 1.15rem;
+    font-size: 0.88rem;
+    font-weight: 700;
+    border-radius: var(--radius-md);
+    background: linear-gradient(135deg, rgba(37, 99, 235, 0.08), rgba(6, 182, 212, 0.08));
+    border: 1px solid rgba(37, 99, 235, 0.25);
+    color: var(--primary-700);
+    cursor: pointer;
+    transition: var(--transition-fast);
+}
+
+.camera-quick-btn:hover {
+    background: linear-gradient(135deg, var(--primary-600), var(--primary-700));
+    color: white;
+    border-color: var(--primary-600);
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-md);
+}
+
+[data-theme="dark"] .camera-quick-btn {
+    background: rgba(37, 99, 235, 0.15);
+    border-color: rgba(96, 165, 250, 0.3);
+    color: #93c5fd;
+}
+
+[data-theme="dark"] .camera-quick-btn:hover {
+    background: var(--primary-600);
+    color: white;
+}

@@ -1,0 +1,684 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Know Your Disease | Voice & Symptom AI Engine | DiagnoAI{% endblock %}
+
+{% block extra_head %}
+<style>
+    .recorder-page-container {
+        max-width: 1180px;
+        margin: 2.5rem auto 5rem;
+        padding: 0 1.25rem;
+    }
+
+    .dual-card {
+        background: var(--surface-card);
+        border: 1px solid var(--surface-glass-border);
+        border-radius: var(--radius-xl);
+        padding: 2.25rem 2rem;
+        box-shadow: var(--shadow-xl);
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        transition: var(--transition-normal);
+    }
+
+    /* Method B: Voice Mic Elements */
+    .mic-pulse-circle {
+        width: 88px;
+        height: 88px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, var(--cyan-500), var(--primary-600));
+        color: white;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0.5rem auto 1.25rem;
+        box-shadow: 0 8px 25px rgba(37, 99, 235, 0.3);
+        transition: all 0.3s ease;
+        position: relative;
+        cursor: pointer;
+        user-select: none;
+    }
+
+    .mic-pulse-circle:hover {
+        transform: scale(1.06);
+        box-shadow: 0 12px 30px rgba(37, 99, 235, 0.45);
+    }
+
+    .mic-pulse-circle.recording {
+        background: linear-gradient(135deg, #ef4444, #dc2626) !important;
+        animation: mic-pulse-ring 1.5s infinite;
+        box-shadow: 0 0 30px rgba(239, 68, 68, 0.5) !important;
+    }
+
+    @keyframes mic-pulse-ring {
+        0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.6); }
+        70% { box-shadow: 0 0 0 20px rgba(239, 68, 68, 0); }
+        100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+    }
+
+    .audio-waveform-box {
+        background: var(--bg-main);
+        border: 1px solid var(--surface-glass-border);
+        border-radius: var(--radius-md);
+        padding: 0.5rem 1rem;
+        margin: 0 auto 1rem;
+        width: 100%;
+        height: 60px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+    }
+
+    #audioWaveformCanvas {
+        width: 100%;
+        height: 100%;
+        display: block;
+    }
+
+    /* Common Symptom Chips & Preset Clouds */
+    .symptom-tag-cloud {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.45rem;
+        margin-bottom: 1.25rem;
+    }
+
+    .symptom-chip-preset {
+        padding: 0.38rem 0.8rem;
+        border-radius: var(--radius-full);
+        font-size: 0.82rem;
+        font-weight: 600;
+        background: var(--bg-main);
+        border: 1px solid var(--surface-glass-border);
+        color: var(--text-secondary);
+        cursor: pointer;
+        transition: var(--transition-fast);
+        user-select: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+    }
+
+    .symptom-chip-preset:hover {
+        background: rgba(37, 99, 235, 0.12);
+        color: var(--primary-600);
+        border-color: rgba(37, 99, 235, 0.3);
+        transform: translateY(-1px);
+    }
+
+    .symptom-chip-preset.active {
+        background: var(--primary-600) !important;
+        color: #ffffff !important;
+        border-color: var(--primary-600) !important;
+        box-shadow: 0 3px 10px rgba(37, 99, 235, 0.35);
+    }
+
+    [data-theme="dark"] .symptom-chip-preset:hover {
+        background: rgba(37, 99, 235, 0.25);
+        color: #93c5fd;
+        border-color: #3b82f6;
+    }
+
+    /* Search Autocomplete & Dropdown */
+    .symptom-select-dropdown {
+        border: 1.5px solid var(--surface-glass-border);
+        background-color: var(--bg-main);
+        color: var(--text-primary);
+        border-radius: var(--radius-lg) 0 0 var(--radius-lg);
+        padding: 0.75rem 1rem;
+        font-size: 0.92rem;
+        font-weight: 500;
+        transition: var(--transition-fast);
+        outline: none;
+    }
+
+    .symptom-select-dropdown:focus {
+        border-color: var(--primary-500);
+        background-color: var(--surface-card);
+        box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.15);
+        color: var(--text-primary);
+    }
+
+    [data-theme="dark"] .symptom-select-dropdown {
+        background-color: #0f172a;
+        color: #f1f5f9;
+        border-color: #334155;
+    }
+
+    [data-theme="dark"] .symptom-select-dropdown option {
+        background-color: #0f172a;
+        color: #f1f5f9;
+    }
+
+    .symptom-search-wrap {
+        position: relative;
+        margin-bottom: 1.25rem;
+    }
+
+    .symptom-search-input {
+        width: 100%;
+        padding: 0.8rem 1rem 0.8rem 2.6rem;
+        border-radius: var(--radius-lg);
+        border: 1.5px solid var(--surface-glass-border);
+        background: var(--bg-main);
+        font-size: 0.95rem;
+        color: var(--text-primary);
+        outline: none;
+        transition: var(--transition-fast);
+    }
+
+    .symptom-search-input:focus {
+        border-color: var(--primary-500);
+        background: var(--surface-card);
+        box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.15);
+    }
+
+    .symptom-search-icon {
+        position: absolute;
+        left: 0.9rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--text-muted);
+        pointer-events: none;
+    }
+
+    .symptom-dropdown {
+        position: absolute;
+        top: calc(100% + 4px);
+        left: 0;
+        right: 0;
+        background: var(--surface-card);
+        border: 1px solid var(--surface-glass-border);
+        border-radius: var(--radius-lg);
+        box-shadow: var(--shadow-xl);
+        max-height: 220px;
+        overflow-y: auto;
+        z-index: 1050;
+        display: none;
+    }
+
+    .symptom-dropdown-item {
+        padding: 0.65rem 1rem;
+        font-size: 0.88rem;
+        font-weight: 500;
+        color: var(--text-primary);
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        cursor: pointer;
+        transition: var(--transition-fast);
+    }
+
+    .symptom-dropdown-item:hover {
+        background: rgba(37, 99, 235, 0.12);
+        color: var(--primary-600);
+    }
+
+    /* Selected Tokens Box */
+    .selected-tokens-box {
+        min-height: 95px;
+        max-height: 180px;
+        overflow-y: auto;
+        padding: 0.75rem;
+        background: var(--bg-main);
+        border: 1.5px dashed var(--surface-glass-border);
+        border-radius: var(--radius-lg);
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.45rem;
+        align-content: flex-start;
+        margin-bottom: 1.25rem;
+    }
+
+    .diagno-symptom-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        padding: 0.35rem 0.75rem;
+        background: linear-gradient(135deg, rgba(37, 99, 235, 0.12), rgba(6, 182, 212, 0.12));
+        color: var(--primary-700);
+        border: 1px solid rgba(37, 99, 235, 0.25);
+        border-radius: var(--radius-full);
+        font-size: 0.82rem;
+        font-weight: 600;
+        animation: fadeInScale 0.2s ease-out;
+    }
+
+    @keyframes fadeInScale {
+        from { opacity: 0; transform: scale(0.9); }
+        to { opacity: 1; transform: scale(1); }
+    }
+
+    .btn-remove-token {
+        background: transparent;
+        border: none;
+        color: var(--primary-600);
+        font-size: 1.2rem;
+        font-weight: 700;
+        line-height: 1;
+        cursor: pointer;
+        padding: 0 4px;
+        margin-left: 4px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: var(--radius-full);
+        transition: var(--transition-fast);
+        user-select: none;
+    }
+
+    .btn-remove-token:hover {
+        color: #e11d48 !important;
+        background: rgba(225, 29, 72, 0.15);
+        transform: scale(1.15);
+    }
+
+    [data-theme="dark"] .diagno-symptom-chip {
+        background: rgba(37, 99, 235, 0.25) !important;
+        color: #93c5fd !important;
+        border-color: rgba(96, 165, 250, 0.4) !important;
+    }
+
+    [data-theme="dark"] .btn-remove-token {
+        color: #93c5fd !important;
+    }
+
+    /* Duration Pills */
+    .duration-pills-row {
+        display: flex;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+        align-items: center;
+        margin-bottom: 1.25rem;
+    }
+
+    .duration-pill {
+        padding: 0.35rem 0.75rem;
+        border-radius: var(--radius-md);
+        font-size: 0.82rem;
+        font-weight: 600;
+        background: var(--bg-main);
+        border: 1px solid var(--surface-glass-border);
+        color: var(--text-secondary);
+        cursor: pointer;
+        transition: var(--transition-fast);
+    }
+
+    .duration-pill.active, .duration-pill:hover {
+        background: var(--primary-600);
+        color: white;
+        border-color: var(--primary-600);
+    }
+
+    /* Results Accordion Card */
+    .results-accordion-card {
+        background: var(--surface-card);
+        border: 1px solid var(--surface-glass-border);
+        border-radius: var(--radius-xl);
+        padding: 2.5rem;
+        box-shadow: var(--shadow-xl);
+        margin-top: 3rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="recorder-page-container">
+    
+    <!-- Hero Header Banner -->
+    <div style="background: linear-gradient(135deg, rgba(6, 182, 212, 0.08), rgba(37, 99, 235, 0.05)); border: 1px solid var(--surface-glass-border); border-radius: var(--radius-xl); padding: 2.5rem 2rem; margin-bottom: 2.5rem; backdrop-filter: blur(16px);">
+        <div class="d-flex align-items-center justify-content-between flex-wrap gap-3 mb-3">
+            <a href="{% url 'index' %}" class="btn-diagno btn-diagno-outline" style="padding: 0.4rem 0.9rem; font-size: 0.85rem;">
+                <i data-lucide="arrow-left" style="width: 16px; height: 16px;"></i>
+                <span>Back to Home</span>
+            </a>
+            <div class="d-flex gap-2">
+                <span class="diagno-badge diagno-badge-cyan">Speech-to-Text NLP</span>
+                <span class="diagno-badge diagno-badge-blue">Multi-Disease Differential Triage</span>
+            </div>
+        </div>
+
+        <h1 style="font-size: clamp(1.8rem, 3vw, 2.5rem); font-weight: 800; color: var(--text-primary); margin-bottom: 0.5rem;">
+            Know Your Disease &ndash; Voice & Symptom AI Engine
+        </h1>
+        <p style="color: var(--text-secondary); font-size: 1.05rem; margin: 0; max-width: 850px;">
+            Choose symptoms from our autocomplete clinical dictionary (Method A) or speak directly into your microphone (Method B) for instant AI differential classification, specialist routing, and clinical precautions.
+        </p>
+    </div>
+
+    <!-- Dual Method Grid -->
+    <div class="row g-4">
+
+        <!-- ================= CARD 1: METHOD A (SYMPTOM TOKENIZER) ================= -->
+        <div class="col-lg-6">
+            <div class="dual-card">
+                <div class="d-flex align-items-center justify-content-between mb-3">
+                    <h4 style="font-weight: 800; color: var(--text-primary); margin: 0; display: flex; align-items: center; gap: 0.5rem;">
+                        <i data-lucide="tag" style="color: var(--primary-600);"></i>
+                        <span>Method A: Symptom Tokenizer</span>
+                    </h4>
+                    <button type="button" class="btn btn-link btn-sm text-danger p-0" id="clearAllSymptomsBtn" onclick="clearAllSymptoms()" style="font-size: 0.78rem; text-decoration: none; display: none;">
+                        <i data-lucide="x-circle" style="width: 13px; height: 13px; display: inline;"></i> Clear All
+                    </button>
+                </div>
+
+                <!-- Quick Add Popular Symptoms Cloud -->
+                <div class="mb-3">
+                    <div class="d-flex align-items-center justify-content-between mb-2">
+                        <label class="diagno-label mb-0" style="font-size: 0.8rem; font-weight: 700; color: var(--text-secondary);">
+                            <i data-lucide="zap" style="width: 14px; height: 14px; color: var(--amber-500); display: inline;"></i> Quick Add Common Symptoms:
+                        </label>
+                        <span class="text-muted" style="font-size: 0.72rem;">Click to add/remove</span>
+                    </div>
+                    <div class="symptom-tag-cloud" id="quickSymptomChips">
+                        <span class="symptom-chip-preset" data-sym="high_fever"><i data-lucide="plus" style="width: 12px; height: 12px;"></i> High Fever</span>
+                        <span class="symptom-chip-preset" data-sym="mild_fever"><i data-lucide="plus" style="width: 12px; height: 12px;"></i> Mild Fever</span>
+                        <span class="symptom-chip-preset" data-sym="headache"><i data-lucide="plus" style="width: 12px; height: 12px;"></i> Headache</span>
+                        <span class="symptom-chip-preset" data-sym="cough"><i data-lucide="plus" style="width: 12px; height: 12px;"></i> Cough</span>
+                        <span class="symptom-chip-preset" data-sym="chills"><i data-lucide="plus" style="width: 12px; height: 12px;"></i> Chills</span>
+                        <span class="symptom-chip-preset" data-sym="fatigue"><i data-lucide="plus" style="width: 12px; height: 12px;"></i> Fatigue</span>
+                        <span class="symptom-chip-preset" data-sym="chest_pain"><i data-lucide="plus" style="width: 12px; height: 12px;"></i> Chest Pain</span>
+                        <span class="symptom-chip-preset" data-sym="breathlessness"><i data-lucide="plus" style="width: 12px; height: 12px;"></i> Breathlessness</span>
+                        <span class="symptom-chip-preset" data-sym="stomach_pain"><i data-lucide="plus" style="width: 12px; height: 12px;"></i> Stomach Pain</span>
+                        <span class="symptom-chip-preset" data-sym="vomiting"><i data-lucide="plus" style="width: 12px; height: 12px;"></i> Vomiting</span>
+                        <span class="symptom-chip-preset" data-sym="diarrhoea"><i data-lucide="plus" style="width: 12px; height: 12px;"></i> Diarrhea</span>
+                        <span class="symptom-chip-preset" data-sym="joint_pain"><i data-lucide="plus" style="width: 12px; height: 12px;"></i> Joint Pain</span>
+                        <span class="symptom-chip-preset" data-sym="skin_rash"><i data-lucide="plus" style="width: 12px; height: 12px;"></i> Skin Rash</span>
+                        <span class="symptom-chip-preset" data-sym="itching"><i data-lucide="plus" style="width: 12px; height: 12px;"></i> Itching</span>
+                        <span class="symptom-chip-preset" data-sym="dizziness"><i data-lucide="plus" style="width: 12px; height: 12px;"></i> Dizziness</span>
+                        <span class="symptom-chip-preset" data-sym="acidity"><i data-lucide="plus" style="width: 12px; height: 12px;"></i> Acidity</span>
+                        <span class="symptom-chip-preset" data-sym="throat_irritation"><i data-lucide="plus" style="width: 12px; height: 12px;"></i> Sore Throat</span>
+                        <span class="symptom-chip-preset" data-sym="continuous_sneezing"><i data-lucide="plus" style="width: 12px; height: 12px;"></i> Sneezing / Cold</span>
+                    </div>
+                </div>
+
+                <!-- Dropdown Menu of Symptoms List -->
+                <div class="mb-3">
+                    <label class="diagno-label mb-1" style="font-size: 0.8rem; font-weight: 700; color: var(--text-secondary);">
+                        <i data-lucide="list-plus" style="width: 14px; height: 14px; color: var(--primary-600); display: inline;"></i> Select Symptoms from Clinical List:
+                    </label>
+                    <div class="input-group">
+                        <select class="form-select symptom-select-dropdown" id="symptomSelectDropdown" onchange="onSymptomDropdownSelect(this)">
+                            <option value="" disabled selected>-- Choose a symptom to add (140+ dataset items) --</option>
+                        </select>
+                        <button class="btn btn-primary" type="button" onclick="addSelectedFromDropdown()" style="font-weight: 600; font-size: 0.85rem; padding: 0 1.1rem; border-radius: 0 var(--radius-lg) var(--radius-lg) 0;">
+                            <i data-lucide="plus" style="width: 15px; height: 15px;"></i> Add
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Autocomplete Search Input -->
+                <div class="symptom-search-wrap">
+                    <i data-lucide="search" class="symptom-search-icon" style="width: 18px; height: 18px;"></i>
+                    <input type="text" class="symptom-search-input" id="symptomSearchInput" placeholder="Search 140+ clinical symptoms (e.g. fever, headache, cough)..." autocomplete="off">
+                    <div class="symptom-dropdown" id="symptomDropdown"></div>
+                </div>
+
+                <!-- Selected Tokens Container -->
+                <div class="d-flex align-items-center justify-content-between mb-1">
+                    <label class="diagno-label mb-0" style="font-size: 0.8rem; font-weight: 700; color: var(--text-secondary);">
+                        <i data-lucide="check-circle" style="width: 14px; height: 14px; color: var(--emerald-600); display: inline;"></i> Selected Clinical Symptoms:
+                        <span class="badge bg-primary ms-1" id="symptomCountBadge" style="display: none; font-size: 0.72rem;">0</span>
+                    </label>
+                </div>
+                <div class="selected-tokens-box" id="selectedTokensContainer"></div>
+
+                <!-- Duration Control -->
+                <div class="mb-3">
+                    <label class="diagno-label mb-1" style="font-size: 0.8rem; font-weight: 700; color: var(--text-secondary);">Symptom Duration (Days):</label>
+                    <div class="duration-pills-row">
+                        <span class="duration-pill" data-days="1" onclick="setDurationDays(1)">1 Day</span>
+                        <span class="duration-pill" data-days="3" onclick="setDurationDays(3)">3 Days</span>
+                        <span class="duration-pill active" data-days="5" onclick="setDurationDays(5)">5 Days</span>
+                        <span class="duration-pill" data-days="7" onclick="setDurationDays(7)">7+ Days</span>
+                        <input type="number" id="durationDaysInput" class="diagno-input" value="5" min="1" max="60" style="width: 75px; padding: 0.35rem 0.6rem; font-size: 0.85rem;" onchange="setDurationDays(this.value)">
+                    </div>
+                </div>
+
+                <!-- Action Button -->
+                <div class="mt-auto">
+                    {% csrf_token %}
+                    <button type="button" class="btn-diagno btn-diagno-primary w-100" id="analyzeSymptomsBtn" onclick="submitSymptomAnalysis()" disabled>
+                        <i data-lucide="activity" style="width: 16px; height: 16px;"></i>
+                        <span>Analyze Symptoms</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= CARD 2: METHOD B (VOICE AUDIO DICTATION) ================= -->
+        <div class="col-lg-6">
+            <div class="dual-card text-center">
+                <div class="d-flex align-items-center justify-content-between mb-2">
+                    <h4 style="font-weight: 800; color: var(--text-primary); margin: 0; display: flex; align-items: center; gap: 0.5rem;">
+                        <i data-lucide="mic" style="color: var(--primary-600);"></i>
+                        <span>Method B: Voice Audio Dictation</span>
+                    </h4>
+                    <button type="button" class="btn btn-link btn-sm text-danger p-0" id="clearVoiceCardBtn" onclick="clearVoiceDictation()" style="font-size: 0.78rem; text-decoration: none; display: none;">
+                        <i data-lucide="trash-2" style="width: 13px; height: 13px; display: inline;"></i> Clear Voice
+                    </button>
+                </div>
+                <p style="font-size: 0.88rem; color: var(--text-muted); margin-bottom: 0.75rem;">
+                    Click the microphone to dictate symptoms naturally, or type spoken symptoms directly below:
+                </p>
+
+                <!-- Animated Mic Circle -->
+                <div class="mic-pulse-circle" id="micIconCircle" onclick="toggleVoiceRecording()" title="Click to speak">
+                    <i data-lucide="mic" style="width: 38px; height: 38px;"></i>
+                </div>
+
+                <!-- Real-Time Waveform Visualizer Canvas -->
+                <div class="audio-waveform-box" id="audioWaveformBox">
+                    <canvas id="audioWaveformCanvas" width="440" height="60"></canvas>
+                </div>
+
+                <h5 style="font-weight: 700; color: var(--text-primary); margin: 0.5rem 0 1rem;" id="voiceStatus">
+                    Ready to Record
+                </h5>
+
+                <!-- Live Voice Transcript & Dictation Box -->
+                <div class="mb-3 text-start">
+                    <label class="diagno-label mb-1" style="font-size: 0.8rem; font-weight: 700; color: var(--text-secondary);">
+                        <i data-lucide="message-square" style="width: 14px; height: 14px; color: var(--primary-600); display: inline;"></i> Live Voice Transcript & Dictation:
+                    </label>
+                    <textarea class="form-control" id="voiceLiveTranscript" rows="2" placeholder="Your speech will appear here automatically... You can also type or edit symptoms here anytime." style="background: var(--bg-main); border: 1.5px solid var(--surface-glass-border); border-radius: var(--radius-md); color: var(--text-primary); font-size: 0.88rem; padding: 0.6rem 0.8rem;" oninput="onVoiceTranscriptInput(this.value)"></textarea>
+                </div>
+
+                <!-- Detected Symptoms Container from Voice -->
+                <div id="voiceDetectedSymptomsWrap" class="mb-3" style="display: none;">
+                    <span style="font-size: 0.8rem; font-weight: 700; color: var(--text-secondary); display: block; margin-bottom: 0.4rem;">
+                        <i data-lucide="sparkles" style="width: 14px; height: 14px; color: var(--primary-600); display: inline;"></i> Extracted Symptoms:
+                    </span>
+                    <div id="voiceDetectedChips" class="d-flex flex-wrap gap-1 justify-content-center"></div>
+                </div>
+
+                <!-- Recording Controls -->
+                <div class="d-flex justify-content-center flex-wrap gap-2 mt-auto mb-3">
+                    <button type="button" class="btn-diagno btn-diagno-primary" id="startVoiceBtn" onclick="toggleVoiceRecording()">
+                        <i data-lucide="mic" style="width: 16px; height: 16px;"></i>
+                        <span>Start Recording</span>
+                    </button>
+                    <button type="button" class="btn-diagno btn-diagno-outline disabled" id="clearVoiceControlsBtn" onclick="clearVoiceDictation()" style="color: #64748b;" title="Clear audio recording and transcript">
+                        <i data-lucide="trash-2" style="width: 16px; height: 16px;"></i>
+                        <span>Clear Audio</span>
+                    </button>
+                    <button type="button" class="btn-diagno btn-diagno-primary" id="sendVoiceBtn" onclick="submitVoiceAnalysis()">
+                        <i data-lucide="activity" style="width: 16px; height: 16px;"></i>
+                        <span>Analyze Spoken Symptoms</span>
+                    </button>
+                </div>
+
+                <!-- Quick Test Samples -->
+                <div class="pt-2" style="border-top: 1px dashed var(--surface-glass-border);">
+                    <span style="font-size: 0.78rem; color: var(--text-muted);">
+                        <i data-lucide="sparkles" style="width: 13px; height: 13px; display: inline;"></i> Quick Test Samples:
+                    </span>
+                    <button type="button" class="btn btn-link btn-sm p-0 ms-1" style="font-size: 0.78rem; text-decoration: none; color: var(--primary-600); font-weight: 600;" onclick="loadSampleVoiceText('I have high fever, chills, and severe headache for 3 days')">
+                        "Fever & Chills (3d)"
+                    </button>
+                    <span class="text-muted mx-1">&bull;</span>
+                    <button type="button" class="btn btn-link btn-sm p-0" style="font-size: 0.78rem; text-decoration: none; color: var(--cyan-600); font-weight: 600;" onclick="loadSampleVoiceText('I have chest pain, shortness of breath, and fast heart rate for 2 days')">
+                        "Chest Pain & Breathlessness (2d)"
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= RESULTS SECTION (DIFFERENTIAL TRIAGE ACCORDION) ================= -->
+    <div class="results-accordion-card" id="resultsAccordionCard" style="display: none;">
+        <div class="d-flex align-items-center justify-content-between flex-wrap gap-3 mb-4">
+            <div>
+                <span class="diagno-badge diagno-badge-blue mb-2">Differential Diagnostic Triage</span>
+                <h3 style="font-weight: 800; color: var(--text-primary); margin: 0;">Predicted Diseases & Precautions</h3>
+            </div>
+            <div class="d-flex gap-2">
+                <button type="button" onclick="openClinicalReportModal()" class="btn-diagno btn-diagno-outline">
+                    <i data-lucide="file-text" style="width: 16px; height: 16px;"></i>
+                    <span>Official Clinical Report</span>
+                </button>
+                <a href="{% url 'appointment' %}" class="btn-diagno btn-diagno-primary">
+                    <i data-lucide="video" style="width: 16px; height: 16px;"></i>
+                    <span>Book Doctor Consultation</span>
+                </a>
+            </div>
+        </div>
+
+        <div class="accordion mb-4" id="accordionExample"></div>
+
+        <div style="background: var(--bg-main); border: 1px solid var(--surface-glass-border); border-radius: var(--radius-md); padding: 1.5rem;" class="mb-4">
+            <p style="margin: 0; font-size: 1rem; color: var(--text-primary);">
+                <strong><i data-lucide="info" style="width: 18px; height: 18px; display: inline; color: var(--primary-600);"></i> CLINICAL ADVICE: </strong>
+                <span id="adviceText">Follow recommended precautions and consult a physician if symptoms worsen.</span>
+            </p>
+        </div>
+
+        <!-- ================= HIGH-CONVERTING CONSULT DOCTOR CTA BANNER ================= -->
+        <div class="consult-doctor-triage-card p-4 rounded-3" style="background: linear-gradient(135deg, rgba(37, 99, 235, 0.09), rgba(6, 182, 212, 0.09)); border: 1.5px solid rgba(37, 99, 235, 0.25); backdrop-filter: blur(12px);">
+            <div class="row align-items-center g-3">
+                <div class="col-lg-8">
+                    <div class="d-flex align-items-center flex-wrap gap-2 mb-2">
+                        <span class="diagno-badge diagno-badge-emerald" style="font-size: 0.78rem; font-weight: 700;">
+                            <i data-lucide="check-circle-2" style="width: 13px; height: 13px;"></i> 168+ Verified Specialists Available
+                        </span>
+                        <span class="diagno-badge diagno-badge-cyan" style="font-size: 0.78rem; font-weight: 700;">
+                            <i data-lucide="clock" style="width: 13px; height: 13px;"></i> ~15 Min Response Time
+                        </span>
+                        <span class="diagno-badge diagno-badge-purple" style="font-size: 0.78rem; font-weight: 700;">
+                            <i data-lucide="stethoscope" style="width: 13px; height: 13px;"></i> Recommended: <span id="consultSpecialistTag">General Physician</span>
+                        </span>
+                    </div>
+                    <h4 style="font-weight: 800; color: var(--text-primary); margin-bottom: 0.4rem; font-size: clamp(1.15rem, 2vw, 1.45rem);">
+                        Connect with a Verified Doctor Online
+                    </h4>
+                    <p style="color: var(--text-secondary); font-size: 0.92rem; margin-bottom: 0.6rem; line-height: 1.5;">
+                        Based on your symptom assessment and predicted differential diagnosis, speak with a specialist for clinical confirmation, lab orders, and certified digital prescriptions.
+                    </p>
+                    <div class="d-flex flex-wrap gap-3 text-muted" style="font-size: 0.82rem;">
+                        <span><i data-lucide="shield-check" style="width: 14px; height: 14px; color: var(--emerald-600); display: inline;"></i> 100% HIPAA & Confidential</span>
+                        <span><i data-lucide="video" style="width: 14px; height: 14px; color: var(--primary-600); display: inline;"></i> Encrypted HD Video & Live Chat</span>
+                        <span><i data-lucide="award" style="width: 14px; height: 14px; color: var(--amber-500); display: inline;"></i> Verified Medical Licensure</span>
+                    </div>
+                </div>
+                <div class="col-lg-4 text-lg-end">
+                    <div class="d-flex flex-column gap-2 justify-content-end">
+                        <a href="{% url 'appointment' %}" class="btn-diagno btn-diagno-primary" style="padding: 0.8rem 1.4rem; font-size: 0.95rem; justify-content: center; box-shadow: 0 4px 18px rgba(37, 99, 235, 0.35);">
+                            <i data-lucide="video" style="width: 18px; height: 18px;"></i>
+                            <span>Consult Doctor Online</span>
+                        </a>
+                        <a href="{% url 'search' %}" class="btn-diagno btn-diagno-outline" style="padding: 0.6rem 1.2rem; font-size: 0.85rem; justify-content: center;">
+                            <i data-lucide="calendar" style="width: 15px; height: 15px;"></i>
+                            <span>Find Specialists & Clinics</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ================= CLINICAL SUMMARY REPORT MODAL ================= -->
+<div class="modal fade" id="clinicalReportModal" tabindex="-1" aria-labelledby="clinicalReportModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg modal-dialog-scrollable">
+        <div class="modal-content modal-glass" style="box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);">
+            <div class="modal-header border-bottom py-3">
+                <div class="d-flex align-items-center gap-2">
+                    <i data-lucide="file-check" style="width: 22px; height: 22px; color: var(--primary-600);"></i>
+                    <h5 class="modal-title font-weight-bold" id="clinicalReportModalLabel" style="font-weight: 800; color: var(--text-primary); margin: 0;">
+                        Hospital-Grade Clinical Triage Report
+                    </h5>
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-4" id="clinicalReportPrintArea">
+                <!-- Hospital Letterhead -->
+                <div class="d-flex justify-content-between align-items-start pb-3 mb-3 border-bottom flex-wrap gap-2">
+                    <div>
+                        <div class="d-flex align-items-center gap-2">
+                            <i data-lucide="activity" style="width: 24px; height: 24px; color: var(--primary-600);"></i>
+                            <h4 style="font-weight: 900; margin: 0; color: var(--text-primary); letter-spacing: -0.5px;">DiagnoAI Health System</h4>
+                        </div>
+                        <div style="font-size: 0.8rem; color: var(--text-muted); margin-top: 0.2rem;">
+                            Clinical AI Decision Support & Automated Triage Infrastructure
+                        </div>
+                    </div>
+                    <div class="text-end" style="font-size: 0.82rem; color: var(--text-secondary);">
+                        <div><strong>REPORT ID:</strong> <span id="reportDocId">#DGN-2026-9812</span></div>
+                        <div><strong>DATE & TIME:</strong> <span id="reportDocDate"></span></div>
+                        <div><span class="diagno-badge diagno-badge-emerald" style="font-size: 0.72rem;">HIPAA Compliant</span></div>
+                    </div>
+                </div>
+
+                <!-- 1. Symptoms -->
+                <div class="mb-4">
+                    <h6 style="font-weight: 800; color: var(--text-primary); text-transform: uppercase; font-size: 0.85rem; letter-spacing: 0.5px;">
+                        1. Reported Symptoms & Biomarkers
+                    </h6>
+                    <div id="reportSymptomsList" class="d-flex flex-wrap gap-1 p-2 rounded-2" style="background: var(--bg-main); border: 1px solid var(--surface-glass-border);"></div>
+                </div>
+
+                <!-- 2. Differential Findings -->
+                <div class="mb-4">
+                    <h6 style="font-weight: 800; color: var(--text-primary); text-transform: uppercase; font-size: 0.85rem; letter-spacing: 0.5px;">
+                        2. AI Differential Diagnostic Findings
+                    </h6>
+                    <div id="reportDifferentialTable" class="table-responsive"></div>
+                </div>
+
+                <!-- 3. Precautions -->
+                <div class="mb-4">
+                    <h6 style="font-weight: 800; color: var(--text-primary); text-transform: uppercase; font-size: 0.85rem; letter-spacing: 0.5px;">
+                        3. Precautionary Directives & Specialist Routing
+                    </h6>
+                    <div id="reportPrecautionsBlock" class="p-3 rounded-2" style="background: var(--bg-main); border: 1px solid var(--surface-glass-border); font-size: 0.9rem;"></div>
+                </div>
+
+                <!-- Verification -->
+                <div class="pt-3 border-top d-flex justify-content-between align-items-center flex-wrap gap-3">
+                    <div style="font-size: 0.75rem; color: var(--text-muted); max-width: 480px;">
+                        <em>Disclaimer: This report is generated by DiagnoAI Neural Ensemble Core v6.0 for preliminary triage. Consult a licensed physician for clinical confirmation and prescriptions.</em>
+                    </div>
+                    <div class="text-center">
+                        <div style="font-family: cursive; font-size: 1.1rem; color: var(--primary-700);">Dr. DiagnoAI Core, MD</div>
+                        <div style="font-size: 0.72rem; color: var(--text-muted); border-top: 1px solid #ccc; padding-top: 2px;">Electronic Verification Stamp</div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer border-top py-2 px-3">
+                <button type="button" class="btn btn-sm btn-outline-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn-diagno btn-diagno-primary btn-sm" onclick="printClinicalReport()">
+                    <i data-lucide="printer" style="width: 14px; height: 14px;"></i>
+                    <span>Print / Save PDF</span>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="{% static 'soundRecorder/recorder.js' %}?v=6.1"></script>
+{% endblock %}

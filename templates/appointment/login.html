@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block title %}Sign In | DiagnoAI Health Portal{% endblock %}
+
+{% block extra_head %}
+<style>
+    .auth-wrapper {
+        min-height: calc(100vh - 200px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 3rem 1.5rem;
+    }
+
+    .auth-card {
+        background: var(--surface-card);
+        border: 1px solid var(--surface-glass-border);
+        border-radius: var(--radius-xl);
+        padding: 3rem 2.5rem;
+        box-shadow: var(--shadow-xl);
+        width: 100%;
+        max-width: 480px;
+        position: relative;
+    }
+
+    .auth-brand-badge {
+        width: 60px;
+        height: 60px;
+        border-radius: var(--radius-md);
+        background: linear-gradient(135deg, var(--primary-600), var(--cyan-500));
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 1.5rem;
+        box-shadow: var(--shadow-glow-blue);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="auth-wrapper">
+    <div class="auth-card">
+        <div class="auth-brand-badge">
+            <i data-lucide="lock" style="width: 28px; height: 28px;"></i>
+        </div>
+
+        <div class="text-center mb-4">
+            <h2 style="font-weight: 800; color: var(--text-primary); margin-bottom: 0.25rem;">Welcome Back</h2>
+            <p style="color: var(--text-muted); font-size: 0.92rem;">Sign in to access your consultations & reports</p>
+        </div>
+
+        <form method="POST">
+            {% csrf_token %}
+            <input type="hidden" name="next" value="{{ request.GET.next|default:'' }}">
+            <div class="mb-4">
+                {{ login_form|crispy }}
+            </div>
+            
+            <button class="btn-diagno btn-diagno-primary w-100 btn-diagno-lg mb-3" type="submit">
+                <i data-lucide="log-in" style="width: 18px; height: 18px;"></i>
+                <span>Sign In to Account</span>
+            </button>
+        </form>
+
+        <div class="text-center pt-3 border-top" style="font-size: 0.9rem; color: var(--text-secondary);">
+            Don't have an account? <a href="{% url 'register' %}{% if request.GET.next %}?next={{ request.GET.next|urlencode }}{% endif %}" style="font-weight: 700; color: var(--primary-600);">Create an Account</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

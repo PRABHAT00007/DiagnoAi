@@ -1,0 +1,754 @@
+abdominal_pain,4
+abdominal pain,4
+abnormal_menstruation,4
+abnormal menstruation,4
+achilles_tendon_pain,3
+achilles tendon pain,3
+acidity,2
+acidity,2
+acute_liver_failure,7
+acute liver failure,7
+acute_panic_and_terror,5
+acute panic and terror,5
+altered_sensorium,6
+altered sensorium,6
+alternating_diarrhea_and_constipation,4
+alternating diarrhea and constipation,4
+anal_fissure_pain,4
+anal fissure pain,4
+anal_itching,2
+anal itching,2
+anal_swelling,3
+anal swelling,3
+ankle_swelling,4
+ankle swelling,4
+anxiety,3
+anxiety,3
+back_pain,3
+back pain,3
+bad_breath,1
+bad breath,1
+balance_instability,4
+balance instability,4
+band_like_tension_headache,3
+band like tension headache,3
+barking_cough,4
+barking cough,4
+belly_pain,4
+belly pain,4
+big_toe_joint_pain,5
+big toe joint pain,5
+bitter_taste_in_mouth,2
+bitter taste in mouth,2
+black_tarry_stools,7
+black tarry stools,7
+blackheads,1
+blackheads,1
+bladder_discomfort,3
+bladder discomfort,3
+bleeding_gums,3
+bleeding gums,3
+blind_spots_in_vision,5
+blind spots in vision,5
+blister,3
+blister,3
+bloating,2
+bloating,2
+blood_in_sputum,6
+blood in sputum,6
+blood_in_urine,6
+blood in urine,6
+bloody_stool,6
+bloody stool,6
+blue_lips_or_fingers,7
+blue lips or fingers,7
+blurred_and_distorted_vision,5
+blurred and distorted vision,5
+body_stiffness_in_morning,3
+body stiffness in morning,3
+bone_tenderness,5
+bone tenderness,5
+bounding_pulse,4
+bounding pulse,4
+brain_fog_and_forgetfulness,3
+brain fog and forgetfulness,3
+breathlessness,6
+breathlessness,6
+bright_red_blood_in_stool,6
+bright red blood in stool,6
+brittle_nails,2
+brittle nails,2
+bruising,3
+bruising,3
+burning_eyes,2
+burning eyes,2
+burning_micturition,4
+burning micturition,4
+burning_nerve_pain,4
+burning nerve pain,4
+burning_throat_sensation,3
+burning throat sensation,3
+burning_tongue_syndrome,2
+burning tongue syndrome,2
+butterfly_rash_across_cheeks,4
+butterfly rash across cheeks,4
+calf_cramps_at_night,3
+calf cramps at night,3
+calf_pain_while_walking,4
+calf pain while walking,4
+calf_tenderness,4
+calf tenderness,4
+chest_congestion,3
+chest congestion,3
+chest_heaviness_after_meals,3
+chest heaviness after meals,3
+chest_pain,6
+chest pain,6
+chest_tightness,5
+chest tightness,5
+chills,3
+chills,3
+choking_sensation,6
+choking sensation,6
+chronic_cough,4
+chronic cough,4
+chronic_fatigue,3
+chronic fatigue,3
+chronic_lower_back_pain,4
+chronic lower back pain,4
+circular_ring_shaped_rash,3
+circular ring shaped rash,3
+clay_colored_pale_stools,5
+clay colored pale stools,5
+cloudy_turbid_urine,3
+cloudy turbid urine,3
+cluster_headache_behind_one_eye,5
+cluster headache behind one eye,5
+clusters_of_painful_blisters,5
+clusters of painful blisters,5
+cold_fingers_and_toes,2
+cold fingers and toes,2
+cold_hands_and_feets,2
+cold hands and feets,2
+cold_intolerance,3
+cold intolerance,3
+cold_sores_around_lips,2
+cold sores around lips,2
+coma,7
+coma,7
+confusion,6
+confusion,6
+congestion,2
+congestion,2
+constant_throat_clearing,2
+constant throat clearing,2
+constipation,2
+constipation,2
+continuous_feel_of_urine,4
+continuous feel of urine,4
+continuous_sneezing,2
+continuous sneezing,2
+cough,2
+cough,2
+coughing_up_clear_mucus,2
+coughing up clear mucus,2
+coughing_up_greenish_phlegm,4
+coughing up greenish phlegm,4
+coughing_up_yellowish_phlegm,3
+coughing up yellowish phlegm,3
+cramps,3
+cramps,3
+crepitus,2
+crepitus,2
+crushing_substernal_chest_pain,7
+crushing substernal chest pain,7
+dark_urine,4
+dark urine,4
+dark_velvety_skin_patches,3
+dark velvety skin patches,3
+daytime_sleepiness,2
+daytime sleepiness,2
+dehydration,5
+dehydration,5
+depression,4
+depression,4
+diarrhoea,4
+diarrhoea,4
+difficulty_finding_words,5
+difficulty finding words,5
+difficulty_focusing_on_tasks,2
+difficulty focusing on tasks,2
+difficulty_starting_urination,3
+difficulty starting urination,3
+dischromic_patches,3
+dischromic patches,3
+distention_of_abdomen,4
+distention of abdomen,4
+dizziness,3
+dizziness,3
+double_vision,6
+double vision,6
+dry_coated_tongue,2
+dry coated tongue,2
+dry_cracked_scaly_skin,2
+dry cracked scaly skin,2
+dry_hacking_cough,3
+dry hacking cough,3
+dry_mucous_membranes,3
+dry mucous membranes,3
+drying_and_tingling_lips,2
+drying and tingling lips,2
+ear_discharge,4
+ear discharge,4
+earache_or_ear_pain,3
+earache or ear pain,3
+early_morning_fatigue,2
+early morning fatigue,2
+early_satiety,3
+early satiety,3
+easy_fatigability,3
+easy fatigability,3
+elbow_pain,2
+elbow pain,2
+emotional_numbness,3
+emotional numbness,3
+enlarged_thyroid,4
+enlarged thyroid,4
+epigastric_fullness_after_meals,2
+epigastric fullness after meals,2
+excessive_belching_and_burping,2
+excessive belching and burping,2
+excessive_guilt_or_worthlessness,4
+excessive guilt or worthlessness,4
+excessive_hunger,3
+excessive hunger,3
+excessive_skin_dryness,2
+excessive skin dryness,2
+excessive_thirst,3
+excessive thirst,3
+excessively_heavy_menstrual_bleeding,5
+excessively heavy menstrual bleeding,5
+extra_marital_contacts,4
+extra marital contacts,4
+extreme_irritability_and_agitation,3
+extreme irritability and agitation,3
+eye_floaters,2
+eye floaters,2
+eye_itching,2
+eye itching,2
+eyelid_twitching,1
+eyelid twitching,1
+facial_muscle_droop,7
+facial muscle droop,7
+facial_pain,3
+facial pain,3
+fainting,6
+fainting,6
+family_history,3
+family history,3
+fast_heart_rate,5
+fast heart rate,5
+fatigue,3
+fatigue,3
+feeling_bladder_never_empties,3
+feeling bladder never empties,3
+feeling_feverish,3
+feeling feverish,3
+flaky_itchy_scalp,1
+flaky itchy scalp,1
+fluid_overload,6
+fluid overload,6
+fluttering_in_chest,4
+fluttering in chest,4
+food_regurgitation,3
+food regurgitation,3
+foot_swelling,4
+foot swelling,4
+foul_smell_of_urine,3
+foul smell of urine,3
+foul_smelling_sputum,5
+foul smelling sputum,5
+frequent_awakenings,2
+frequent awakenings,2
+frequent_urgency_to_urinate,3
+frequent urgency to urinate,3
+frontal_headache,3
+frontal headache,3
+fullness_in_ears,2
+fullness in ears,2
+general_weakness,3
+general weakness,3
+generalized_myalgia_and_body_aches,3
+generalized myalgia and body aches,3
+generalized_swelling,5
+generalized swelling,5
+golden_honey_crusted_sores,4
+golden honey crusted sores,4
+greasy_foul_smelling_stools,4
+greasy foul smelling stools,4
+groin_tenderness,4
+groin tenderness,4
+hair_thinning_or_shedding,2
+hair thinning or shedding,2
+hand_tremor_at_rest,4
+hand tremor at rest,4
+headache,3
+headache,3
+heat_intolerance,3
+heat intolerance,3
+heavy_feeling_in_chest,5
+heavy feeling in chest,5
+heel_pain_in_morning,3
+heel pain in morning,3
+high_blood_pressure,4
+high blood pressure,4
+high_fever,5
+high fever,5
+hip_joint_pain,3
+hip joint pain,3
+hip_pain_while_walking,4
+hip pain while walking,4
+history_of_alcohol_consumption,3
+history of alcohol consumption,3
+hoarseness_of_voice,3
+hoarseness of voice,3
+hot_flashes,2
+hot flashes,2
+hyperventilation_and_gasping,5
+hyperventilation and gasping,5
+hypogastric_pain,4
+hypogastric pain,4
+inability_to_take_deep_breath,5
+inability to take deep breath,5
+increased_appetite,2
+increased appetite,2
+indigestion,2
+indigestion,2
+inflammatory_nails,3
+inflammatory nails,3
+insomnia,3
+insomnia,3
+intensely_itchy_red_welts,3
+intensely itchy red welts,3
+intention_tremor,4
+intention tremor,4
+internal_itching,3
+internal itching,3
+intrusive_thoughts,3
+intrusive thoughts,3
+irregular_heartbeat,5
+irregular heartbeat,5
+irregular_menstrual_cycles,3
+irregular menstrual cycles,3
+irregular_sugar_level,5
+irregular sugar level,5
+irritability,2
+irritability,2
+irritation_in_anus,3
+irritation in anus,3
+itching,1
+itching,1
+jaw_clicking_or_pain,2
+jaw clicking or pain,2
+joint_deformity_sensation,4
+joint deformity sensation,4
+joint_pain,3
+joint pain,3
+joint_swelling,4
+joint swelling,4
+knee_pain,3
+knee pain,3
+lack_of_concentration,3
+lack of concentration,3
+left_lower_quadrant_pain,5
+left lower quadrant pain,5
+lethargy,3
+lethargy,3
+lightheadedness_on_standing,3
+lightheadedness on standing,3
+lightheadedness_when_turning_head,3
+lightheadedness when turning head,3
+loss_of_appetite,3
+loss of appetite,3
+loss_of_balance,4
+loss of balance,4
+loss_of_interest_in_activities,4
+loss of interest in activities,4
+loss_of_smell,3
+loss of smell,3
+loss_of_taste,3
+loss of taste,3
+loss_of_voice,3
+loss of voice,3
+loud_stomach_gurgling,1
+loud stomach gurgling,1
+low_blood_pressure,4
+low blood pressure,4
+low_body_temperature,5
+low body temperature,5
+lower_abdominal_cramping,4
+lower abdominal cramping,4
+malaise,3
+malaise,3
+memory_lapses,4
+memory lapses,4
+metallic_taste_in_mouth,2
+metallic taste in mouth,2
+mild_fever,3
+mild fever,3
+missed_menstrual_periods,3
+missed menstrual periods,3
+mood_swings,2
+mood swings,2
+mood_swings_between_high_and_low,3
+mood swings between high and low,3
+morning_joint_stiffness_over_30_minutes,4
+morning joint stiffness over 30 minutes,4
+movement_stiffness,3
+movement stiffness,3
+mucoid_sputum,3
+mucoid sputum,3
+mucous_in_stool,3
+mucous in stool,3
+muffled_hearing,3
+muffled hearing,3
+muscle_fasciculations,2
+muscle fasciculations,2
+muscle_pain,3
+muscle pain,3
+muscle_spasms_in_back,4
+muscle spasms in back,4
+muscle_wasting,5
+muscle wasting,5
+muscle_weakness,4
+muscle weakness,4
+nail_discoloration_yellow_thick,2
+nail discoloration yellow thick,2
+nausea,3
+nausea,3
+neck_pain,3
+neck pain,3
+night_chills,3
+night chills,3
+night_sweats,4
+night sweats,4
+nodal_skin_eruptions,4
+nodal skin eruptions,4
+numbness_in_face,6
+numbness in face,6
+numbness_in_fingers,3
+numbness in fingers,3
+numbness_in_toes,3
+numbness in toes,3
+obesity,2
+obesity,2
+occipital_headache,3
+occipital headache,3
+oily_greasy_skin,1
+oily greasy skin,1
+oozing_skin_blisters,4
+oozing skin blisters,4
+overwhelming_sense_of_impending_doom,5
+overwhelming sense of impending doom,5
+pain_behind_the_eyes,4
+pain behind the eyes,4
+pain_during_bowel_movements,4
+pain during bowel movements,4
+pain_in_anal_region,4
+pain in anal region,4
+painful_bloating,3
+painful bloating,3
+painful_gas_retention,3
+painful gas retention,3
+painful_red_skin_boils,3
+painful red skin boils,3
+painful_skin_fissures,3
+painful skin fissures,3
+painful_swallowing,4
+painful swallowing,4
+painful_urination_at_start_or_end,4
+painful urination at start or end,4
+painful_walking,3
+painful walking,3
+pale_skin,3
+pale skin,3
+palpitations,4
+palpitations,4
+paroxysmal_nocturnal_dyspnea,6
+paroxysmal nocturnal dyspnea,6
+passage_of_gases,2
+passage of gases,2
+patches_in_throat,4
+patches in throat,4
+peeling_skin_on_palms_or_soles,3
+peeling skin on palms or soles,3
+pelvic_pressure_or_pain,4
+pelvic pressure or pain,4
+persistent_chills,3
+persistent chills,3
+persistent_nervousness_and_worry,3
+persistent nervousness and worry,3
+phlegm,2
+phlegm,2
+pink_or_cola_colored_urine,5
+pink or cola colored urine,5
+pins_and_needles_in_feet,3
+pins and needles in feet,3
+pins_and_needles_in_hands,3
+pins and needles in hands,3
+pleuritic_chest_pain,6
+pleuritic chest pain,6
+polyuria,4
+polyuria,4
+poor_peripheral_circulation,3
+poor peripheral circulation,3
+post_nasal_drip,2
+post nasal drip,2
+productive_cough,3
+productive cough,3
+profound_sadness_and_crying_spells,4
+profound sadness and crying spells,4
+projectile_vomiting,6
+projectile vomiting,6
+prominent_veins_on_calf,3
+prominent veins on calf,3
+puffy_face_and_eyes,4
+puffy face and eyes,4
+pulsating_neck_veins,5
+pulsating neck veins,5
+purple_spots_on_skin,6
+purple spots on skin,6
+pus_filled_pimples,2
+pus filled pimples,2
+racing_uncontrollable_thoughts,3
+racing uncontrollable thoughts,3
+radiating_pain_to_jaw,6
+radiating pain to jaw,6
+radiating_pain_to_left_arm,7
+radiating pain to left arm,7
+radiating_pain_to_shoulder,6
+radiating pain to shoulder,6
+rapid_shallow_breathing,5
+rapid shallow breathing,5
+rapid_weight_gain,3
+rapid weight gain,3
+receiving_blood_transfusion,4
+receiving blood transfusion,4
+receiving_unsterile_injections,5
+receiving unsterile injections,5
+rectal_pressure,3
+rectal pressure,3
+red_sore_around_nose,3
+red sore around nose,3
+red_spots_over_body,3
+red spots over body,3
+redness_of_eyes,2
+redness of eyes,2
+restlessness,2
+restlessness,2
+restricted_joint_mobility,3
+restricted joint mobility,3
+rib_cage_tenderness,4
+rib cage tenderness,4
+right_lower_quadrant_pain,6
+right lower quadrant pain,6
+right_upper_quadrant_pain,5
+right upper quadrant pain,5
+ringing_in_ears,3
+ringing in ears,3
+room_spinning_vertigo,4
+room spinning vertigo,4
+runny_nose,2
+runny nose,2
+rusty_sputum,5
+rusty sputum,5
+sciatica_shooting_leg_pain,5
+sciatica shooting leg pain,5
+scurring,2
+scurring,2
+sensation_of_lump_in_throat,2
+sensation of lump in throat,2
+sensitivity_to_light,3
+sensitivity to light,3
+sensitivity_to_sound,3
+sensitivity to sound,3
+separation_of_nail_from_nailbed,2
+separation of nail from nailbed,2
+severe_exhaustion,4
+severe exhaustion,4
+severe_flank_pain_radiating_to_groin,6
+severe flank pain radiating to groin,6
+severe_heartburn,3
+severe heartburn,3
+severe_menstrual_cramps,4
+severe menstrual cramps,4
+shallow_breathing,5
+shallow breathing,5
+sharp_abdominal_pain,6
+sharp abdominal pain,6
+shivering,3
+shivering,3
+shooting_nerve_pain,5
+shooting nerve pain,5
+shortness_of_breath_lying_flat,6
+shortness of breath lying flat,6
+shortness_of_breath_on_exertion,5
+shortness of breath on exertion,5
+shoulder_stiffness_and_pain,3
+shoulder stiffness and pain,3
+silver_like_dusting,2
+silver like dusting,2
+sinus_pressure,3
+sinus pressure,3
+skin_peeling,3
+skin peeling,3
+skin_rash,3
+skin rash,3
+skin_thickening_and_hardening,3
+skin thickening and hardening,3
+skipped_heartbeats,4
+skipped heartbeats,4
+sleep_apnea_symptoms,5
+sleep apnea symptoms,5
+sleep_deprivation,3
+sleep deprivation,3
+slow_healing_wounds,4
+slow healing wounds,4
+slow_heart_rate,5
+slow heart rate,5
+slurred_speech,6
+slurred speech,6
+small_dents_in_nails,2
+small dents in nails,2
+snoring,2
+snoring,2
+social_anxiety,3
+social anxiety,3
+sour_acid_regurgitation,2
+sour acid regurgitation,2
+spider_veins,2
+spider veins,2
+spinal_tenderness,4
+spinal tenderness,4
+spinning_movements,4
+spinning movements,4
+spoon_shaped_concave_nails,3
+spoon shaped concave nails,3
+spotting_urination,5
+spotting urination,5
+stiff_neck,4
+stiff neck,4
+stomach_bleeding,7
+stomach bleeding,7
+stomach_pain,4
+stomach pain,4
+stridor,7
+stridor,7
+strong_ammonia_urine_odor,2
+strong ammonia urine odor,2
+sudden_dimming_of_vision,6
+sudden dimming of vision,6
+sudden_hair_loss_in_patches,3
+sudden hair loss in patches,3
+sunken_eyes,4
+sunken eyes,4
+sweating,3
+sweating,3
+swelled_lymph_nodes,4
+swelled lymph nodes,4
+swelling_joints,4
+swelling joints,4
+swelling_of_stomach,4
+swelling of stomach,4
+swollen_blood_vessels,4
+swollen blood vessels,4
+swollen_extremeties,4
+swollen extremeties,4
+swollen_finger_joints,3
+swollen finger joints,3
+swollen_glands_in_armpit,4
+swollen glands in armpit,4
+swollen_glands_in_groin,4
+swollen glands in groin,4
+swollen_legs,4
+swollen legs,4
+tailbone_pain,3
+tailbone pain,3
+target_like_bullseye_rash,5
+target like bullseye rash,5
+temporary_hearing_loss,5
+temporary hearing loss,5
+tender_points_across_body,4
+tender points across body,4
+tenesmus,4
+tenesmus,4
+testicular_pain_or_swelling,6
+testicular pain or swelling,6
+throat_irritation,2
+throat irritation,2
+throat_tickle,1
+throat tickle,1
+throbbing_temple_headache,4
+throbbing temple headache,4
+throbbing_veins,3
+throbbing veins,3
+tingling_sensation,3
+tingling sensation,3
+toxic_look_(typhos),6
+toxic look (typhos),6
+tremors,4
+tremors,4
+ulcers_on_tongue,2
+ulcers on tongue,2
+unexplained_weight_loss,4
+unexplained weight loss,4
+unsteadiness,3
+unsteadiness,3
+upper_abdominal_burning,4
+upper abdominal burning,4
+urethral_discharge,5
+urethral discharge,5
+urinary_incontinence_or_leaking,4
+urinary incontinence or leaking,4
+visual_aura_flashing_lights,4
+visual aura flashing lights,4
+visual_disturbances,4
+visual disturbances,4
+vomiting,4
+vomiting,4
+vomiting_bile,5
+vomiting bile,5
+vomiting_coffee_ground_material,7
+vomiting coffee ground material,7
+waking_up_multiple_times_to_urinate,3
+waking up multiple times to urinate,3
+warm_tender_joints,4
+warm tender joints,4
+watering_from_eyes,2
+watering from eyes,2
+weak_grip_strength,3
+weak grip strength,3
+weak_or_interrupted_urinary_stream,4
+weak or interrupted urinary stream,4
+weakness_in_limbs,4
+weakness in limbs,4
+weakness_of_one_body_side,7
+weakness of one body side,7
+weight_gain,2
+weight gain,2
+weight_loss,3
+weight loss,3
+wheezing,5
+wheezing,5
+wrist_pain_and_weakness,3
+wrist pain and weakness,3
+yellow_crust_ooze,4
+yellow crust ooze,4
+yellow_urine,3
+yellow urine,3
+yellowing_of_eyes,5
+yellowing of eyes,5
+yellowing_palms_or_skin,4
+yellowing palms or skin,4
+yellowish_skin,5
+yellowish skin,5

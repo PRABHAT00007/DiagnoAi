@@ -1,0 +1,407 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Breast Cancer Biopsy Risk Diagnostic | DiagnoAI{% endblock %}
+
+{% block extra_head %}
+<style>
+    .form-container {
+        max-width: 1100px;
+        margin: 3rem auto 5rem;
+        padding: 0 1.5rem;
+    }
+
+    .form-card {
+        background: var(--surface-card);
+        border: 1px solid var(--surface-glass-border);
+        border-radius: var(--radius-xl);
+        padding: 3rem 2.5rem;
+        box-shadow: var(--shadow-xl);
+    }
+
+    .biopsy-card {
+        background: var(--bg-main);
+        border: 1px solid var(--surface-glass-border);
+        border-radius: var(--radius-lg);
+        padding: 1.5rem;
+        height: 100%;
+    }
+
+    .biopsy-card-title {
+        font-size: 1rem;
+        font-weight: 800;
+        color: var(--primary-800);
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .demo-btn-group {
+        display: flex;
+        gap: 0.75rem;
+        flex-wrap: wrap;
+        margin-bottom: 1.5rem;
+    }
+
+    .demo-pill-btn {
+        padding: 0.4rem 0.9rem;
+        border-radius: var(--radius-full);
+        font-size: 0.8rem;
+        font-weight: 700;
+        border: 1px solid var(--surface-glass-border);
+        background: var(--bg-main);
+        color: var(--text-secondary);
+        cursor: pointer;
+        transition: var(--transition-fast);
+    }
+
+    .demo-pill-btn:hover {
+        background: var(--primary-100);
+        color: var(--primary-800);
+        border-color: var(--primary-300);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="form-container">
+    <!-- Header Card -->
+    <div style="background: linear-gradient(135deg, rgba(225, 29, 72, 0.08), rgba(192, 38, 211, 0.05)); border: 1px solid var(--surface-glass-border); border-radius: var(--radius-xl); padding: 2.5rem 2rem; margin-bottom: 2.5rem; backdrop-filter: blur(16px);">
+        <div class="d-flex align-items-center justify-content-between flex-wrap gap-3 mb-3">
+            <a href="{% url 'index' %}" class="btn-diagno btn-diagno-outline" style="padding: 0.4rem 0.9rem; font-size: 0.85rem;">
+                <i data-lucide="arrow-left" style="width: 16px; height: 16px;"></i>
+                <span>Back to Home</span>
+            </a>
+            <span class="diagno-badge diagno-badge-rose">Fine-Needle Aspirate (FNA) Classifier</span>
+        </div>
+
+        <h1 style="font-size: clamp(1.8rem, 3vw, 2.5rem); font-weight: 800; color: var(--text-primary); margin-bottom: 0.5rem;">
+            Breast Cancer Cellular Biopsy Diagnostic
+        </h1>
+        <p style="color: var(--text-secondary); font-size: 1.05rem; margin: 0; max-width: 800px;">
+            Analyzes cell nucleus geometric characteristics from digitized fine needle aspirate (FNA) images to classify tumors as <strong>Malignant</strong> or <strong>Benign</strong>.
+        </p>
+    </div>
+
+    <!-- Form Main Card -->
+    <div class="form-card">
+        <!-- Quick Demo Presets -->
+        <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-3">
+            <span style="font-size: 0.85rem; font-weight: 700; color: var(--text-muted);">Quick Test Presets:</span>
+            <div class="demo-btn-group mb-0">
+                <button type="button" class="demo-pill-btn" onclick="fillBenignSample()">
+                    <i data-lucide="check" style="width: 12px; height: 12px; display: inline;"></i> Load Benign Sample
+                </button>
+                <button type="button" class="demo-pill-btn" onclick="fillMalignantSample()" style="color: #e11d48;">
+                    <i data-lucide="alert-triangle" style="width: 12px; height: 12px; display: inline;"></i> Load Malignant Sample
+                </button>
+            </div>
+        </div>
+
+        <form action="{% url 'cancer-predict' %}" method="post" id="cancerForm">
+            {% csrf_token %}
+
+            <div class="row g-4">
+                <!-- 1. Radius -->
+                <div class="col-md-6 col-lg-4">
+                    <div class="biopsy-card">
+                        <div class="biopsy-card-title">
+                            <i data-lucide="circle-dot" style="width: 16px; height: 16px; color: var(--primary-600);"></i>
+                            <span>1. Cell Radius</span>
+                        </div>
+                        <div class="diagno-input-group mb-2">
+                            <label class="diagno-label" style="font-size: 0.8rem;">Radius Mean</label>
+                            <input type="number" step="any" name="radius_mean" id="f_radius_mean" class="diagno-input" placeholder="e.g. 14.12" required>
+                        </div>
+                        <div class="diagno-input-group mb-2">
+                            <label class="diagno-label" style="font-size: 0.8rem;">Radius SE</label>
+                            <input type="number" step="any" name="radius_se" id="f_radius_se" class="diagno-input" placeholder="e.g. 0.28" required>
+                        </div>
+                        <div class="diagno-input-group mb-0">
+                            <label class="diagno-label" style="font-size: 0.8rem;">Radius Worst</label>
+                            <input type="number" step="any" name="radius_worst" id="f_radius_worst" class="diagno-input" placeholder="e.g. 15.11" required>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 2. Texture -->
+                <div class="col-md-6 col-lg-4">
+                    <div class="biopsy-card">
+                        <div class="biopsy-card-title">
+                            <i data-lucide="grid" style="width: 16px; height: 16px; color: var(--cyan-600);"></i>
+                            <span>2. Texture (Grayscale)</span>
+                        </div>
+                        <div class="diagno-input-group mb-2">
+                            <label class="diagno-label" style="font-size: 0.8rem;">Texture Mean</label>
+                            <input type="number" step="any" name="texture_mean" id="f_texture_mean" class="diagno-input" placeholder="e.g. 19.28" required>
+                        </div>
+                        <div class="diagno-input-group mb-2">
+                            <label class="diagno-label" style="font-size: 0.8rem;">Texture SE</label>
+                            <input type="number" step="any" name="texture_se" id="f_texture_se" class="diagno-input" placeholder="e.g. 0.73" required>
+                        </div>
+                        <div class="diagno-input-group mb-0">
+                            <label class="diagno-label" style="font-size: 0.8rem;">Texture Worst</label>
+                            <input type="number" step="any" name="texture_worst" id="f_texture_worst" class="diagno-input" placeholder="e.g. 25.68" required>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 3. Perimeter -->
+                <div class="col-md-6 col-lg-4">
+                    <div class="biopsy-card">
+                        <div class="biopsy-card-title">
+                            <i data-lucide="square" style="width: 16px; height: 16px; color: var(--emerald-600);"></i>
+                            <span>3. Perimeter</span>
+                        </div>
+                        <div class="diagno-input-group mb-2">
+                            <label class="diagno-label" style="font-size: 0.8rem;">Perimeter Mean</label>
+                            <input type="number" step="any" name="perimeter_mean" id="f_perimeter_mean" class="diagno-input" placeholder="e.g. 91.96" required>
+                        </div>
+                        <div class="diagno-input-group mb-2">
+                            <label class="diagno-label" style="font-size: 0.8rem;">Perimeter SE</label>
+                            <input type="number" step="any" name="perimeter_se" id="f_perimeter_se" class="diagno-input" placeholder="e.g. 2.04" required>
+                        </div>
+                        <div class="diagno-input-group mb-0">
+                            <label class="diagno-label" style="font-size: 0.8rem;">Perimeter Worst</label>
+                            <input type="number" step="any" name="perimeter_worst" id="f_perimeter_worst" class="diagno-input" placeholder="e.g. 99.70" required>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 4. Area -->
+                <div class="col-md-6 col-lg-4">
+                    <div class="biopsy-card">
+                        <div class="biopsy-card-title">
+                            <i data-lucide="maximize" style="width: 16px; height: 16px; color: var(--amber-500);"></i>
+                            <span>4. Area</span>
+                        </div>
+                        <div class="diagno-input-group mb-2">
+                            <label class="diagno-label" style="font-size: 0.8rem;">Area Mean</label>
+                            <input type="number" step="any" name="area_mean" id="f_area_mean" class="diagno-input" placeholder="e.g. 654.9" required>
+                        </div>
+                        <div class="diagno-input-group mb-2">
+                            <label class="diagno-label" style="font-size: 0.8rem;">Area SE</label>
+                            <input type="number" step="any" name="area_se" id="f_area_se" class="diagno-input" placeholder="e.g. 24.53" required>
+                        </div>
+                        <div class="diagno-input-group mb-0">
+                            <label class="diagno-label" style="font-size: 0.8rem;">Area Worst</label>
+                            <input type="number" step="any" name="area_worst" id="f_area_worst" class="diagno-input" placeholder="e.g. 711.2" required>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 5. Smoothness -->
+                <div class="col-md-6 col-lg-4">
+                    <div class="biopsy-card">
+                        <div class="biopsy-card-title">
+                            <i data-lucide="feather" style="width: 16px; height: 16px; color: var(--rose-500);"></i>
+                            <span>5. Smoothness</span>
+                        </div>
+                        <div class="diagno-input-group mb-2">
+                            <label class="diagno-label" style="font-size: 0.8rem;">Smoothness Mean</label>
+                            <input type="number" step="any" name="smoothness_mean" id="f_smoothness_mean" class="diagno-input" placeholder="e.g. 0.096" required>
+                        </div>
+                        <div class="diagno-input-group mb-2">
+                            <label class="diagno-label" style="font-size: 0.8rem;">Smoothness SE</label>
+                            <input type="number" step="any" name="smoothness_se" id="f_smoothness_se" class="diagno-input" placeholder="e.g. 0.006" required>
+                        </div>
+                        <div class="diagno-input-group mb-0">
+                            <label class="diagno-label" style="font-size: 0.8rem;">Smoothness Worst</label>
+                            <input type="number" step="any" name="smoothness_worst" id="f_smoothness_worst" class="diagno-input" placeholder="e.g. 0.128" required>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 6. Compactness -->
+                <div class="col-md-6 col-lg-4">
+                    <div class="biopsy-card">
+                        <div class="biopsy-card-title">
+                            <i data-lucide="box" style="width: 16px; height: 16px; color: var(--primary-600);"></i>
+                            <span>6. Compactness</span>
+                        </div>
+                        <div class="diagno-input-group mb-2">
+                            <label class="diagno-label" style="font-size: 0.8rem;">Compactness Mean</label>
+                            <input type="number" step="any" name="compactness_mean" id="f_compactness_mean" class="diagno-input" placeholder="e.g. 0.104" required>
+                        </div>
+                        <div class="diagno-input-group mb-2">
+                            <label class="diagno-label" style="font-size: 0.8rem;">Compactness SE</label>
+                            <input type="number" step="any" name="compactness_se" id="f_compactness_se" class="diagno-input" placeholder="e.g. 0.025" required>
+                        </div>
+                        <div class="diagno-input-group mb-0">
+                            <label class="diagno-label" style="font-size: 0.8rem;">Compactness Worst</label>
+                            <input type="number" step="any" name="compactness_worst" id="f_compactness_worst" class="diagno-input" placeholder="e.g. 0.211" required>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 7. Concavity -->
+                <div class="col-md-6 col-lg-4">
+                    <div class="biopsy-card">
+                        <div class="biopsy-card-title">
+                            <i data-lucide="moon" style="width: 16px; height: 16px; color: var(--cyan-600);"></i>
+                            <span>7. Concavity</span>
+                        </div>
+                        <div class="diagno-input-group mb-2">
+                            <label class="diagno-label" style="font-size: 0.8rem;">Concavity Mean</label>
+                            <input type="number" step="any" name="concavity_mean" id="f_concavity_mean" class="diagno-input" placeholder="e.g. 0.088" required>
+                        </div>
+                        <div class="diagno-input-group mb-2">
+                            <label class="diagno-label" style="font-size: 0.8rem;">Concavity SE</label>
+                            <input type="number" step="any" name="concavity_se" id="f_concavity_se" class="diagno-input" placeholder="e.g. 0.031" required>
+                        </div>
+                        <div class="diagno-input-group mb-0">
+                            <label class="diagno-label" style="font-size: 0.8rem;">Concavity Worst</label>
+                            <input type="number" step="any" name="concavity_worst" id="f_concavity_worst" class="diagno-input" placeholder="e.g. 0.268" required>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 8. Concave Points -->
+                <div class="col-md-6 col-lg-4">
+                    <div class="biopsy-card">
+                        <div class="biopsy-card-title">
+                            <i data-lucide="target" style="width: 16px; height: 16px; color: var(--emerald-600);"></i>
+                            <span>8. Concave Points</span>
+                        </div>
+                        <div class="diagno-input-group mb-2">
+                            <label class="diagno-label" style="font-size: 0.8rem;">Concave Points Mean</label>
+                            <input type="number" step="any" name="concave points_mean" id="f_cp_mean" class="diagno-input" placeholder="e.g. 0.048" required>
+                        </div>
+                        <div class="diagno-input-group mb-2">
+                            <label class="diagno-label" style="font-size: 0.8rem;">Concave Points SE</label>
+                            <input type="number" step="any" name="concave points_se" id="f_cp_se" class="diagno-input" placeholder="e.g. 0.011" required>
+                        </div>
+                        <div class="diagno-input-group mb-0">
+                            <label class="diagno-label" style="font-size: 0.8rem;">Concave Points Worst</label>
+                            <input type="number" step="any" name="concave points_worst" id="f_cp_worst" class="diagno-input" placeholder="e.g. 0.114" required>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 9. Symmetry -->
+                <div class="col-md-6 col-lg-4">
+                    <div class="biopsy-card">
+                        <div class="biopsy-card-title">
+                            <i data-lucide="columns" style="width: 16px; height: 16px; color: var(--amber-500);"></i>
+                            <span>9. Symmetry</span>
+                        </div>
+                        <div class="diagno-input-group mb-2">
+                            <label class="diagno-label" style="font-size: 0.8rem;">Symmetry Mean</label>
+                            <input type="number" step="any" name="symmetry_mean" id="f_sym_mean" class="diagno-input" placeholder="e.g. 0.181" required>
+                        </div>
+                        <div class="diagno-input-group mb-2">
+                            <label class="diagno-label" style="font-size: 0.8rem;">Symmetry SE</label>
+                            <input type="number" step="any" name="symmetry_se" id="f_sym_se" class="diagno-input" placeholder="e.g. 0.020" required>
+                        </div>
+                        <div class="diagno-input-group mb-0">
+                            <label class="diagno-label" style="font-size: 0.8rem;">Symmetry Worst</label>
+                            <input type="number" step="any" name="symmetry_worst" id="f_sym_worst" class="diagno-input" placeholder="e.g. 0.287" required>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 10. Fractal Dimension -->
+                <div class="col-md-6 col-lg-4">
+                    <div class="biopsy-card">
+                        <div class="biopsy-card-title">
+                            <i data-lucide="git-commit" style="width: 16px; height: 16px; color: var(--rose-500);"></i>
+                            <span>10. Fractal Dimension</span>
+                        </div>
+                        <div class="diagno-input-group mb-2">
+                            <label class="diagno-label" style="font-size: 0.8rem;">Fractal Dim Mean</label>
+                            <input type="number" step="any" name="fractal_dimension_mean" id="f_frac_mean" class="diagno-input" placeholder="e.g. 0.062" required>
+                        </div>
+                        <div class="diagno-input-group mb-2">
+                            <label class="diagno-label" style="font-size: 0.8rem;">Fractal Dim SE</label>
+                            <input type="number" step="any" name="fractal_dimension_se" id="f_frac_se" class="diagno-input" placeholder="e.g. 0.003" required>
+                        </div>
+                        <div class="diagno-input-group mb-0">
+                            <label class="diagno-label" style="font-size: 0.8rem;">Fractal Dim Worst</label>
+                            <input type="number" step="any" name="fractal_dimension_worst" id="f_frac_worst" class="diagno-input" placeholder="e.g. 0.083" required>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Submit Button -->
+            <div class="text-center mt-5">
+                <button type="submit" class="btn-diagno btn-diagno-primary btn-diagno-lg w-100" style="max-width: 450px;">
+                    <i data-lucide="shield-alert" style="width: 20px; height: 20px;"></i>
+                    <span>Run Biopsy Classification</span>
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    function fillBenignSample() {
+        document.getElementById("f_radius_mean").value = "13.54";
+        document.getElementById("f_radius_se").value = "0.269";
+        document.getElementById("f_radius_worst").value = "15.11";
+        document.getElementById("f_texture_mean").value = "14.36";
+        document.getElementById("f_texture_se").value = "0.788";
+        document.getElementById("f_texture_worst").value = "19.26";
+        document.getElementById("f_perimeter_mean").value = "87.46";
+        document.getElementById("f_perimeter_se").value = "2.058";
+        document.getElementById("f_perimeter_worst").value = "99.70";
+        document.getElementById("f_area_mean").value = "566.3";
+        document.getElementById("f_area_se").value = "23.56";
+        document.getElementById("f_area_worst").value = "711.2";
+        document.getElementById("f_smoothness_mean").value = "0.09779";
+        document.getElementById("f_smoothness_se").value = "0.00846";
+        document.getElementById("f_smoothness_worst").value = "0.1440";
+        document.getElementById("f_compactness_mean").value = "0.08129";
+        document.getElementById("f_compactness_se").value = "0.0146";
+        document.getElementById("f_compactness_worst").value = "0.1773";
+        document.getElementById("f_concavity_mean").value = "0.06664";
+        document.getElementById("f_concavity_se").value = "0.02387";
+        document.getElementById("f_concavity_worst").value = "0.2390";
+        document.getElementById("f_cp_mean").value = "0.04781";
+        document.getElementById("f_cp_se").value = "0.01315";
+        document.getElementById("f_cp_worst").value = "0.1288";
+        document.getElementById("f_sym_mean").value = "0.1885";
+        document.getElementById("f_sym_se").value = "0.0198";
+        document.getElementById("f_sym_worst").value = "0.2977";
+        document.getElementById("f_frac_mean").value = "0.05766";
+        document.getElementById("f_frac_se").value = "0.0023";
+        document.getElementById("f_frac_worst").value = "0.07259";
+    }
+
+    function fillMalignantSample() {
+        document.getElementById("f_radius_mean").value = "17.99";
+        document.getElementById("f_radius_se").value = "1.095";
+        document.getElementById("f_radius_worst").value = "25.38";
+        document.getElementById("f_texture_mean").value = "10.38";
+        document.getElementById("f_texture_se").value = "0.9053";
+        document.getElementById("f_texture_worst").value = "17.33";
+        document.getElementById("f_perimeter_mean").value = "122.8";
+        document.getElementById("f_perimeter_se").value = "8.589";
+        document.getElementById("f_perimeter_worst").value = "184.6";
+        document.getElementById("f_area_mean").value = "1001.0";
+        document.getElementById("f_area_se").value = "153.4";
+        document.getElementById("f_area_worst").value = "2019.0";
+        document.getElementById("f_smoothness_mean").value = "0.1184";
+        document.getElementById("f_smoothness_se").value = "0.006399";
+        document.getElementById("f_smoothness_worst").value = "0.1622";
+        document.getElementById("f_compactness_mean").value = "0.2776";
+        document.getElementById("f_compactness_se").value = "0.04904";
+        document.getElementById("f_compactness_worst").value = "0.6656";
+        document.getElementById("f_concavity_mean").value = "0.3001";
+        document.getElementById("f_concavity_se").value = "0.05373";
+        document.getElementById("f_concavity_worst").value = "0.7119";
+        document.getElementById("f_cp_mean").value = "0.1471";
+        document.getElementById("f_cp_se").value = "0.01587";
+        document.getElementById("f_cp_worst").value = "0.2654";
+        document.getElementById("f_sym_mean").value = "0.2419";
+        document.getElementById("f_sym_se").value = "0.03003";
+        document.getElementById("f_sym_worst").value = "0.4601";
+        document.getElementById("f_frac_mean").value = "0.07871";
+        document.getElementById("f_frac_se").value = "0.006193";
+        document.getElementById("f_frac_worst").value = "0.1189";
+    }
+</script>
+{% endblock %}

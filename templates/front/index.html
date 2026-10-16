@@ -1,0 +1,1364 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}DiagnoAI | Next-Gen AI Health Diagnostics & Telehealth{% endblock %}
+
+{% block extra_head %}
+<style>
+    /* Hero Section Styles */
+    .hero-wrapper {
+        position: relative;
+        padding: 5rem 0 4rem;
+        overflow: hidden;
+    }
+
+    .hero-glow-1 {
+        position: absolute;
+        top: -10%;
+        left: -10%;
+        width: 550px;
+        height: 550px;
+        background: radial-gradient(circle, rgba(37, 99, 235, 0.15) 0%, transparent 70%);
+        pointer-events: none;
+        z-index: 0;
+    }
+
+    .hero-glow-2 {
+        position: absolute;
+        top: 20%;
+        right: -5%;
+        width: 600px;
+        height: 600px;
+        background: radial-gradient(circle, rgba(6, 182, 212, 0.15) 0%, transparent 70%);
+        pointer-events: none;
+        z-index: 0;
+    }
+
+    .hero-title {
+        font-size: clamp(2.5rem, 5vw, 4rem);
+        font-weight: 800;
+        line-height: 1.1;
+        letter-spacing: -1.5px;
+        color: var(--text-primary);
+        margin-bottom: 1.5rem;
+    }
+
+    .hero-title-gradient {
+        background: linear-gradient(135deg, var(--primary-600), var(--cyan-500));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    .hero-subtitle {
+        font-size: 1.15rem;
+        color: var(--text-secondary);
+        line-height: 1.7;
+        margin-bottom: 2rem;
+        max-width: 580px;
+    }
+
+    .hero-stats-row {
+        display: flex;
+        gap: 2rem;
+        margin-top: 2.5rem;
+        padding-top: 2rem;
+        border-top: 1px solid var(--surface-glass-border);
+    }
+
+    .hero-stat-item strong {
+        display: block;
+        font-size: 1.75rem;
+        font-weight: 800;
+        color: var(--primary-700);
+        line-height: 1;
+    }
+
+    .hero-stat-item span {
+        font-size: 0.82rem;
+        color: var(--text-muted);
+        font-weight: 600;
+    }
+
+    /* Floating Diagnostic Hub */
+    .diagnostic-hub-card {
+        background: var(--surface-card);
+        backdrop-filter: blur(20px);
+        border: 1px solid var(--surface-glass-border);
+        border-radius: var(--radius-xl);
+        padding: 2rem;
+        box-shadow: var(--shadow-xl);
+        position: relative;
+    }
+
+    .hub-pulse-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 1.5rem;
+    }
+
+    .hub-quick-item {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        padding: 0.9rem;
+        border-radius: var(--radius-md);
+        background: var(--bg-main);
+        border: 1px solid var(--surface-glass-border);
+        margin-bottom: 0.75rem;
+        transition: var(--transition-fast);
+        text-decoration: none;
+        color: var(--text-primary);
+    }
+
+    .hub-quick-item:hover {
+        background: white;
+        border-color: var(--primary-300);
+        transform: translateX(6px);
+        box-shadow: var(--shadow-sm);
+        color: var(--text-primary);
+    }
+
+    .hub-quick-icon {
+        width: 42px;
+        height: 42px;
+        border-radius: var(--radius-sm);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.2rem;
+    }
+
+    /* Section Styling */
+    .diagno-section {
+        padding: 5rem 0;
+    }
+
+    .section-header {
+        text-align: center;
+        max-width: 700px;
+        margin: 0 auto 3.5rem;
+    }
+
+    .section-eyebrow {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        padding: 0.35rem 0.85rem;
+        border-radius: var(--radius-full);
+        background: var(--primary-100);
+        color: var(--primary-800);
+        font-size: 0.78rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        margin-bottom: 1rem;
+    }
+
+    .section-title {
+        font-size: clamp(2rem, 3.5vw, 2.75rem);
+        font-weight: 800;
+        letter-spacing: -1px;
+        margin-bottom: 1rem;
+        color: var(--text-primary);
+    }
+
+    .section-subtitle {
+        color: var(--text-secondary);
+        font-size: 1.05rem;
+    }
+
+    /* Filter Chips */
+    .filter-chips-container {
+        display: flex;
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 0.75rem;
+        margin-bottom: 3rem;
+    }
+
+    .filter-chip {
+        padding: 0.55rem 1.25rem;
+        border-radius: var(--radius-full);
+        font-size: 0.88rem;
+        font-weight: 600;
+        background: var(--surface-card);
+        border: 1px solid var(--surface-glass-border);
+        color: var(--text-secondary);
+        cursor: pointer;
+        transition: var(--transition-fast);
+    }
+
+    .filter-chip:hover, .filter-chip.active {
+        background: var(--primary-600) !important;
+        color: white !important;
+        border-color: var(--primary-600) !important;
+        box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
+    }
+
+    /* Disease Grid Card & Bento Grid */
+    .disease-grid-card {
+        background: var(--surface-card);
+        border: 1px solid var(--surface-glass-border);
+        border-radius: var(--radius-xl);
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        transition: var(--transition-normal);
+        box-shadow: var(--shadow-md);
+        position: relative;
+    }
+
+    .disease-grid-card:hover {
+        transform: translateY(-6px);
+        box-shadow: var(--shadow-xl);
+        border-color: rgba(37, 99, 235, 0.4);
+    }
+
+    .disease-grid-card.bento-hero {
+        background: linear-gradient(135deg, var(--surface-card) 0%, var(--bg-main) 100%);
+        border: 1.5px solid rgba(37, 99, 235, 0.3);
+    }
+
+    @media (min-width: 992px) {
+        .disease-grid-card.bento-hero {
+            flex-direction: row;
+        }
+        .disease-grid-card.bento-hero .disease-card-img-wrap {
+            width: 45%;
+            height: auto;
+            min-height: 280px;
+        }
+        .disease-grid-card.bento-hero .disease-card-body {
+            width: 55%;
+        }
+    }
+
+    .disease-card-img-wrap {
+        height: 195px;
+        position: relative;
+        overflow: hidden;
+        background: #0f172a;
+    }
+
+    .disease-card-img-wrap img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.5s ease;
+    }
+
+    .disease-grid-card:hover .disease-card-img-wrap img {
+        transform: scale(1.05);
+    }
+
+    .disease-card-body {
+        padding: 1.75rem;
+        display: flex;
+        flex-direction: column;
+        flex-grow: 1;
+    }
+
+
+    /* Process Timeline */
+    .step-card {
+        background: var(--surface-card);
+        border: 1px solid var(--surface-glass-border);
+        border-radius: var(--radius-xl);
+        padding: 2.25rem 2rem;
+        height: 100%;
+        position: relative;
+        box-shadow: var(--shadow-sm);
+        transition: var(--transition-normal);
+    }
+
+    .step-card:hover {
+        transform: translateY(-4px);
+        box-shadow: var(--shadow-lg);
+        border-color: var(--primary-300);
+    }
+
+    .step-num-badge {
+        width: 48px;
+        height: 48px;
+        border-radius: var(--radius-md);
+        background: linear-gradient(135deg, var(--primary-600), var(--cyan-500));
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 800;
+        font-size: 1.25rem;
+        margin-bottom: 1.5rem;
+        box-shadow: var(--shadow-glow-blue);
+    }
+
+    /* Telehealth Banner */
+    .telehealth-banner {
+        background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 100%);
+        border-radius: var(--radius-xl);
+        padding: 4rem 3rem;
+        color: white;
+        position: relative;
+        overflow: hidden;
+        box-shadow: var(--shadow-xl);
+    }
+
+    .telehealth-banner::after {
+        content: '';
+        position: absolute;
+        top: -50%;
+        right: -20%;
+        width: 600px;
+        height: 600px;
+        background: radial-gradient(circle, rgba(6, 182, 212, 0.25) 0%, transparent 70%);
+        pointer-events: none;
+    }
+
+    /* Telemetry Live Bar */
+    .telemetry-bar {
+        background: var(--surface-card);
+        border: 1px solid var(--surface-glass-border);
+        border-radius: var(--radius-full);
+        padding: 0.4rem 1rem;
+        box-shadow: var(--shadow-sm);
+        display: inline-flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+    .live-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: #10b981;
+        box-shadow: 0 0 8px #10b981;
+        display: inline-block;
+        animation: pulse-dot 2s infinite;
+    }
+
+    @keyframes pulse-dot {
+        0%, 100% { opacity: 1; transform: scale(1); }
+        50% { opacity: 0.4; transform: scale(0.85); }
+    }
+
+    .btn-ping {
+        background: none;
+        border: none;
+        padding: 0;
+        cursor: pointer;
+        color: var(--text-muted);
+        display: inline-flex;
+        align-items: center;
+        transition: transform 0.3s ease;
+    }
+
+    .btn-ping:hover {
+        color: var(--primary-600);
+        transform: rotate(90deg);
+    }
+
+    /* Quick Screener Modal Styling */
+    .modal-glass {
+        background: var(--surface-glass);
+        backdrop-filter: blur(24px);
+        -webkit-backdrop-filter: blur(24px);
+        border: 1px solid var(--surface-glass-border);
+        border-radius: var(--radius-xl);
+    }
+
+    .quick-tab-btn {
+        padding: 0.6rem 1.25rem;
+        border-radius: var(--radius-md);
+        font-weight: 700;
+        font-size: 0.9rem;
+        color: var(--text-secondary);
+        border: 1px solid transparent;
+        background: none;
+        transition: var(--transition-fast);
+    }
+
+    .quick-tab-btn.active {
+        background: var(--primary-600);
+        color: white;
+        box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- ================= HERO SECTION ================= -->
+<section class="hero-wrapper">
+    <div class="hero-glow-1"></div>
+    <div class="hero-glow-2"></div>
+
+    <div class="container position-relative" style="z-index: 1;">
+        <div class="row align-items-center g-5">
+            <!-- Left Hero Text -->
+            <div class="col-lg-7">
+                <div class="d-flex align-items-center gap-3 flex-wrap mb-3">
+                    <div class="section-eyebrow mb-0">
+                        <span class="status-dot"></span>
+                        <span>AI-Powered Clinical Screening System</span>
+                    </div>
+                    <div class="telemetry-bar" id="telemetryBar">
+                        <span class="live-dot"></span>
+                        <span style="font-size: 0.8rem; font-weight: 700; color: var(--text-primary);">AI Core: <span id="telemetryStatus" style="color: #059669;">Operational</span></span>
+                        <span style="color: var(--surface-glass-border);">|</span>
+                        <span style="font-size: 0.8rem; color: var(--text-secondary);"><i data-lucide="cpu" style="width:12px; height:12px; display:inline;"></i> 10 Modalities</span>
+                        <span style="color: var(--surface-glass-border);">|</span>
+                        <span style="font-size: 0.8rem; color: var(--text-muted);"><i data-lucide="zap" style="width:12px; height:12px; display:inline;"></i> <span id="telemetryLatency">&lt; 45ms</span></span>
+                        <button type="button" onclick="pingAIHealth()" class="btn-ping" title="Refresh AI Health"><i data-lucide="refresh-cw" id="pingIcon" style="width:12px; height:12px;"></i></button>
+                    </div>
+                </div>
+
+                <h1 class="hero-title">
+                    Next-Generation <br>
+                    <span class="hero-title-gradient">Diagnostic Intelligence</span>
+                </h1>
+
+                <p class="hero-subtitle">
+                    Empowering patients and clinicians with deep learning computer vision, real-time disease risk stratification, voice symptom analysis, and instant telemedicine consultations.
+                </p>
+
+                <div class="d-flex flex-wrap gap-3">
+                    <a href="#diagnostics" class="btn-diagno btn-diagno-primary btn-diagno-lg">
+                        <i data-lucide="scan" style="width: 20px; height: 20px;"></i>
+                        <span>Start Diagnostic Check</span>
+                    </a>
+                    <button type="button" class="btn-diagno btn-diagno-primary btn-diagno-lg" data-bs-toggle="modal" data-bs-target="#quickScreenModal">
+                        <i data-lucide="zap" style="width: 20px; height: 20px;"></i>
+                        <span>Instant Quick-Screen</span>
+                    </button>
+                    <a href="{% url 'know-your-disease' %}" class="btn-diagno btn-diagno-outline btn-diagno-lg">
+                        <i data-lucide="mic" style="width: 20px; height: 20px;"></i>
+                        <span>Voice Symptom AI</span>
+                    </a>
+                </div>
+
+                <!-- Stats Row -->
+                <div class="hero-stats-row">
+                    <div class="hero-stat-item">
+                        <strong>10+</strong>
+                        <span>Deep Neural Networks</span>
+                    </div>
+                    <div class="hero-stat-item">
+                        <strong>98.4%</strong>
+                        <span>Verification Accuracy</span>
+                    </div>
+                    <div class="hero-stat-item">
+                        <strong>&lt; 1.5s</strong>
+                        <span>Instant Inference</span>
+                    </div>
+                    <div class="hero-stat-item">
+                        <strong>24/7</strong>
+                        <span>Telehealth Access</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Hero Diagnostic Hub Preview -->
+            <div class="col-lg-5">
+                <div class="diagnostic-hub-card">
+                    <div class="hub-pulse-header">
+                        <div>
+                            <h5 style="margin: 0; font-weight: 800; color: var(--text-primary);">Quick AI Assessment</h5>
+                            <small style="color: var(--text-muted);">Select a modality to launch scanner</small>
+                        </div>
+                        <span class="diagno-badge diagno-badge-emerald">Active 🟢</span>
+                    </div>
+
+                    <a href="{% url 'brain-tumor-predict' %}" class="hub-quick-item">
+                        <div class="hub-quick-icon" style="background:#eff6ff; color:#2563eb;">
+                            <i data-lucide="brain"></i>
+                        </div>
+                        <div class="flex-grow-1">
+                            <strong style="font-size: 0.95rem; color: var(--text-primary);">Brain MRI Tumor Localization</strong>
+                            <div style="font-size: 0.78rem; color: var(--text-muted);">DenseNet-201 & UNet Segmentation</div>
+                        </div>
+                        <i data-lucide="arrow-right" style="width: 18px; color: var(--primary-600);"></i>
+                    </a>
+
+                    <a href="{% url 'heart-disease-view' %}" class="hub-quick-item">
+                        <div class="hub-quick-icon" style="background:#fef2f2; color:#dc2626;">
+                            <i data-lucide="heart-pulse"></i>
+                        </div>
+                        <div class="flex-grow-1">
+                            <strong style="font-size: 0.95rem; color: var(--text-primary);">Cardiovascular Risk Profile</strong>
+                            <div style="font-size: 0.78rem; color: var(--text-muted);">13-Feature Clinical Vitals Analyzer</div>
+                        </div>
+                        <i data-lucide="arrow-right" style="width: 18px; color: var(--primary-600);"></i>
+                    </a>
+
+                    <a href="{% url 'covid-predict' %}" class="hub-quick-item">
+                        <div class="hub-quick-icon" style="background:#ecfeff; color:#0891b2;">
+                            <i data-lucide="wind"></i>
+                        </div>
+                        <div class="flex-grow-1">
+                            <strong style="font-size: 0.95rem; color: var(--text-primary);">Pulmonary Chest X-Ray</strong>
+                            <div style="font-size: 0.78rem; color: var(--text-muted);">COVID & Pneumonia Grad-CAM Heatmap</div>
+                        </div>
+                        <i data-lucide="arrow-right" style="width: 18px; color: var(--primary-600);"></i>
+                    </a>
+
+                    <a href="{% url 'know-your-disease' %}" class="hub-quick-item" style="margin-bottom: 0;">
+                        <div class="hub-quick-icon" style="background:#f0fdf4; color:#16a34a;">
+                            <i data-lucide="mic"></i>
+                        </div>
+                        <div class="flex-grow-1">
+                            <strong style="font-size: 0.95rem; color: var(--text-primary);">Voice & Speech Symptom Intake</strong>
+                            <div style="font-size: 0.78rem; color: var(--text-muted);">Audio Transcription & Precautions</div>
+                        </div>
+                        <i data-lucide="arrow-right" style="width: 18px; color: var(--primary-600);"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ================= HERO TRIAGE SANDBOX ================= -->
+<section style="padding: 3rem 0; border-top: 1px solid var(--surface-glass-border);">
+    <div class="container">
+        <div class="hero-triage-card" style="background: var(--surface-card); border: 1px solid var(--surface-glass-border); border-radius: var(--radius-xl); padding: 2.5rem 2rem; box-shadow: var(--shadow-xl); max-width: 900px; margin: 0 auto;">
+            <div class="d-flex align-items-center justify-content-between flex-wrap gap-3 mb-3">
+                <div>
+                    <span class="section-eyebrow mb-1" style="display: inline-flex;">
+                        <i data-lucide="zap" style="width: 12px; height: 12px;"></i>
+                        <span>Instant Symptom Triage — No Registration Required</span>
+                    </span>
+                    <h3 style="font-weight: 800; color: var(--text-primary); margin: 0; font-size: 1.4rem;">Try the AI Symptom Checker Right Now</h3>
+                    <p style="color: var(--text-secondary); font-size: 0.9rem; margin: 0.25rem 0 0;">Click symptoms that match how you feel — get an AI-powered differential diagnosis in &lt; 1 second.</p>
+                </div>
+                <div id="triageResultBadge" style="display:none; text-align: center; min-width: 160px;">
+                    <div id="triageTopDisease" style="font-size: 1rem; font-weight: 800; color: var(--primary-700);"></div>
+                    <div id="triageConfidence" style="font-size: 0.78rem; color: var(--text-muted); margin-top: 0.2rem;"></div>
+                    <a id="triageFullLink" href="{% url 'know-your-disease' %}" style="font-size: 0.75rem; color: var(--primary-600); text-decoration: none; font-weight: 700;">Full Analysis →</a>
+                </div>
+
+
+            </div>
+
+            <!-- Symptom Preset Chips -->
+            <div id="triageChipContainer" style="display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1.25rem;">
+                <button type="button" class="triage-chip" onclick="toggleTriageChip(this)" data-sym="fever" style="padding: 0.4rem 0.85rem; border-radius: var(--radius-full); font-size: 0.82rem; font-weight: 600; border: 1.5px solid var(--surface-glass-border); background: var(--bg-main); color: var(--text-secondary); cursor: pointer; transition: all 0.18s ease;">Fever</button>
+                <button type="button" class="triage-chip" onclick="toggleTriageChip(this)" data-sym="headache" style="padding: 0.4rem 0.85rem; border-radius: var(--radius-full); font-size: 0.82rem; font-weight: 600; border: 1.5px solid var(--surface-glass-border); background: var(--bg-main); color: var(--text-secondary); cursor: pointer; transition: all 0.18s ease;">Headache</button>
+                <button type="button" class="triage-chip" onclick="toggleTriageChip(this)" data-sym="cough" style="padding: 0.4rem 0.85rem; border-radius: var(--radius-full); font-size: 0.82rem; font-weight: 600; border: 1.5px solid var(--surface-glass-border); background: var(--bg-main); color: var(--text-secondary); cursor: pointer; transition: all 0.18s ease;">Cough</button>
+                <button type="button" class="triage-chip" onclick="toggleTriageChip(this)" data-sym="breathlessness" style="padding: 0.4rem 0.85rem; border-radius: var(--radius-full); font-size: 0.82rem; font-weight: 600; border: 1.5px solid var(--surface-glass-border); background: var(--bg-main); color: var(--text-secondary); cursor: pointer; transition: all 0.18s ease;">Breathlessness</button>
+                <button type="button" class="triage-chip" onclick="toggleTriageChip(this)" data-sym="chest_pain" style="padding: 0.4rem 0.85rem; border-radius: var(--radius-full); font-size: 0.82rem; font-weight: 600; border: 1.5px solid var(--surface-glass-border); background: var(--bg-main); color: var(--text-secondary); cursor: pointer; transition: all 0.18s ease;">Chest Pain</button>
+                <button type="button" class="triage-chip" onclick="toggleTriageChip(this)" data-sym="fatigue" style="padding: 0.4rem 0.85rem; border-radius: var(--radius-full); font-size: 0.82rem; font-weight: 600; border: 1.5px solid var(--surface-glass-border); background: var(--bg-main); color: var(--text-secondary); cursor: pointer; transition: all 0.18s ease;">Fatigue</button>
+                <button type="button" class="triage-chip" onclick="toggleTriageChip(this)" data-sym="nausea" style="padding: 0.4rem 0.85rem; border-radius: var(--radius-full); font-size: 0.82rem; font-weight: 600; border: 1.5px solid var(--surface-glass-border); background: var(--bg-main); color: var(--text-secondary); cursor: pointer; transition: all 0.18s ease;">Nausea</button>
+                <button type="button" class="triage-chip" onclick="toggleTriageChip(this)" data-sym="vomiting" style="padding: 0.4rem 0.85rem; border-radius: var(--radius-full); font-size: 0.82rem; font-weight: 600; border: 1.5px solid var(--surface-glass-border); background: var(--bg-main); color: var(--text-secondary); cursor: pointer; transition: all 0.18s ease;">Vomiting</button>
+                <button type="button" class="triage-chip" onclick="toggleTriageChip(this)" data-sym="abdominal_pain" style="padding: 0.4rem 0.85rem; border-radius: var(--radius-full); font-size: 0.82rem; font-weight: 600; border: 1.5px solid var(--surface-glass-border); background: var(--bg-main); color: var(--text-secondary); cursor: pointer; transition: all 0.18s ease;">Abdominal Pain</button>
+                <button type="button" class="triage-chip" onclick="toggleTriageChip(this)" data-sym="back_pain" style="padding: 0.4rem 0.85rem; border-radius: var(--radius-full); font-size: 0.82rem; font-weight: 600; border: 1.5px solid var(--surface-glass-border); background: var(--bg-main); color: var(--text-secondary); cursor: pointer; transition: all 0.18s ease;">Back Pain</button>
+                <button type="button" class="triage-chip" onclick="toggleTriageChip(this)" data-sym="joint_pain" style="padding: 0.4rem 0.85rem; border-radius: var(--radius-full); font-size: 0.82rem; font-weight: 600; border: 1.5px solid var(--surface-glass-border); background: var(--bg-main); color: var(--text-secondary); cursor: pointer; transition: all 0.18s ease;">Joint Pain</button>
+                <button type="button" class="triage-chip" onclick="toggleTriageChip(this)" data-sym="dizziness" style="padding: 0.4rem 0.85rem; border-radius: var(--radius-full); font-size: 0.82rem; font-weight: 600; border: 1.5px solid var(--surface-glass-border); background: var(--bg-main); color: var(--text-secondary); cursor: pointer; transition: all 0.18s ease;">Dizziness</button>
+                <button type="button" class="triage-chip" onclick="toggleTriageChip(this)" data-sym="weight_loss" style="padding: 0.4rem 0.85rem; border-radius: var(--radius-full); font-size: 0.82rem; font-weight: 600; border: 1.5px solid var(--surface-glass-border); background: var(--bg-main); color: var(--text-secondary); cursor: pointer; transition: all 0.18s ease;">Weight Loss</button>
+                <button type="button" class="triage-chip" onclick="toggleTriageChip(this)" data-sym="skin_rash" style="padding: 0.4rem 0.85rem; border-radius: var(--radius-full); font-size: 0.82rem; font-weight: 600; border: 1.5px solid var(--surface-glass-border); background: var(--bg-main); color: var(--text-secondary); cursor: pointer; transition: all 0.18s ease;">Skin Rash</button>
+                <button type="button" class="triage-chip" onclick="toggleTriageChip(this)" data-sym="sore_throat" style="padding: 0.4rem 0.85rem; border-radius: var(--radius-full); font-size: 0.82rem; font-weight: 600; border: 1.5px solid var(--surface-glass-border); background: var(--bg-main); color: var(--text-secondary); cursor: pointer; transition: all 0.18s ease;">Sore Throat</button>
+                <button type="button" class="triage-chip" onclick="toggleTriageChip(this)" data-sym="runny_nose" style="padding: 0.4rem 0.85rem; border-radius: var(--radius-full); font-size: 0.82rem; font-weight: 600; border: 1.5px solid var(--surface-glass-border); background: var(--bg-main); color: var(--text-secondary); cursor: pointer; transition: all 0.18s ease;">Runny Nose</button>
+                <button type="button" class="triage-chip" onclick="toggleTriageChip(this)" data-sym="body_ache" style="padding: 0.4rem 0.85rem; border-radius: var(--radius-full); font-size: 0.82rem; font-weight: 600; border: 1.5px solid var(--surface-glass-border); background: var(--bg-main); color: var(--text-secondary); cursor: pointer; transition: all 0.18s ease;">Body Ache</button>
+                <button type="button" class="triage-chip" onclick="toggleTriageChip(this)" data-sym="chills" style="padding: 0.4rem 0.85rem; border-radius: var(--radius-full); font-size: 0.82rem; font-weight: 600; border: 1.5px solid var(--surface-glass-border); background: var(--bg-main); color: var(--text-secondary); cursor: pointer; transition: all 0.18s ease;">Chills</button>
+                <button type="button" class="triage-chip" onclick="toggleTriageChip(this)" data-sym="sweating" style="padding: 0.4rem 0.85rem; border-radius: var(--radius-full); font-size: 0.82rem; font-weight: 600; border: 1.5px solid var(--surface-glass-border); background: var(--bg-main); color: var(--text-secondary); cursor: pointer; transition: all 0.18s ease;">Sweating</button>
+                <button type="button" class="triage-chip" onclick="toggleTriageChip(this)" data-sym="loss_of_appetite" style="padding: 0.4rem 0.85rem; border-radius: var(--radius-full); font-size: 0.82rem; font-weight: 600; border: 1.5px solid var(--surface-glass-border); background: var(--bg-main); color: var(--text-secondary); cursor: pointer; transition: all 0.18s ease;">Loss of Appetite</button>
+                <button type="button" class="triage-chip" onclick="toggleTriageChip(this)" data-sym="constipation" style="padding: 0.4rem 0.85rem; border-radius: var(--radius-full); font-size: 0.82rem; font-weight: 600; border: 1.5px solid var(--surface-glass-border); background: var(--bg-main); color: var(--text-secondary); cursor: pointer; transition: all 0.18s ease;">Constipation</button>
+                <button type="button" class="triage-chip" onclick="toggleTriageChip(this)" data-sym="diarrhoea" style="padding: 0.4rem 0.85rem; border-radius: var(--radius-full); font-size: 0.82rem; font-weight: 600; border: 1.5px solid var(--surface-glass-border); background: var(--bg-main); color: var(--text-secondary); cursor: pointer; transition: all 0.18s ease;">Diarrhoea</button>
+                <button type="button" class="triage-chip" onclick="toggleTriageChip(this)" data-sym="blurred_and_distorted_vision" style="padding: 0.4rem 0.85rem; border-radius: var(--radius-full); font-size: 0.82rem; font-weight: 600; border: 1.5px solid var(--surface-glass-border); background: var(--bg-main); color: var(--text-secondary); cursor: pointer; transition: all 0.18s ease;">Blurred Vision</button>
+                <button type="button" class="triage-chip" onclick="toggleTriageChip(this)" data-sym="anxiety" style="padding: 0.4rem 0.85rem; border-radius: var(--radius-full); font-size: 0.82rem; font-weight: 600; border: 1.5px solid var(--surface-glass-border); background: var(--bg-main); color: var(--text-secondary); cursor: pointer; transition: all 0.18s ease;">Anxiety</button>
+            </div>
+
+            <div class="d-flex gap-3 align-items-center flex-wrap">
+                <button type="button" id="triageRunBtn" onclick="runHeroTriage()" class="btn-diagno btn-diagno-primary" style="min-width: 180px;" disabled>
+                    <i data-lucide="scan" style="width: 16px; height: 16px;"></i>
+                    <span id="triageBtnText">Select Symptoms First</span>
+                </button>
+                <button type="button" onclick="clearTriageChips()" class="btn-diagno btn-diagno-outline" style="padding: 0.5rem 1rem; font-size: 0.85rem;">
+                    <i data-lucide="x" style="width: 14px; height: 14px;"></i>
+                    Clear
+                </button>
+                <span style="font-size: 0.8rem; color: var(--text-muted);" id="triageSelectionCount">0 symptoms selected</span>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ================= DIAGNOSTIC SUITES SECTION ================= -->
+<section class="diagno-section" id="diagnostics">
+    <div class="container">
+        <div class="section-header">
+            <div class="section-eyebrow">
+                <i data-lucide="grid" style="width: 14px; height: 14px;"></i>
+                <span>Complete Clinical Diagnostic Suite</span>
+            </div>
+            <h2 class="section-title">Comprehensive AI Diagnostic Modalities</h2>
+            <p class="section-subtitle">Choose from our neural vision models or clinical biomarker analyzers for instant screening insights.</p>
+        </div>
+
+        <!-- Filter Chips -->
+        <div class="filter-chips-container">
+            <button class="filter-chip active" onclick="filterGrid('all', this)">All Diagnostics (10)</button>
+            <button class="filter-chip" onclick="filterGrid('vision', this)">🧠 Computer Vision & Imaging</button>
+            <button class="filter-chip" onclick="filterGrid('clinical', this)">📊 Clinical & Lab Biomarkers</button>
+            <button class="filter-chip" onclick="filterGrid('symptom', this)">🎙️ Voice & Symptoms</button>
+        </div>
+
+        <!-- Asymmetric Bento Grid Cards -->
+        <div class="row g-4" id="diagnosticCardsContainer">
+            
+            <!-- 1. Hero Bento Card: Brain Tumor (Wide 8-Col) -->
+            <div class="col-lg-8 diag-item" data-category="vision">
+                <div class="disease-grid-card bento-hero">
+                    <div class="disease-card-img-wrap">
+                        <img src="{% static 'front/brain tumor.jpg' %}" alt="Brain Tumor MRI" onerror="this.src='https://images.unsplash.com/photo-1559757175-5700dde675bc?auto=format&fit=crop&w=600&q=80'">
+                        <span class="diagno-badge diagno-badge-blue" style="position: absolute; top: 1rem; left: 1rem;">
+                            <i data-lucide="sparkles" style="width: 12px; height: 12px; display: inline;"></i> Featured Neural Model
+                        </span>
+                    </div>
+                    <div class="disease-card-body justify-content-between">
+                        <div>
+                            <div class="d-flex align-items-center gap-2 mb-2 flex-wrap">
+                                <span class="diagno-badge diagno-badge-blue">Neuro-Oncology</span>
+                                <span class="diagno-badge diagno-badge-emerald">UNet 4-Class Segmentor</span>
+                                <span style="font-size: 0.75rem; color: var(--text-muted);"><i data-lucide="clock" style="width: 12px; height: 12px; display: inline;"></i> &lt;1.8s latency</span>
+                            </div>
+                            <h3 style="font-weight: 800; color: var(--text-primary); margin-bottom: 0.5rem; font-size: 1.4rem;">
+                                Brain MRI Tumor Localization & Segmentation
+                            </h3>
+                            <p style="color: var(--text-secondary); font-size: 0.92rem; line-height: 1.6; margin-bottom: 1.25rem;">
+                                Deep UNet neural architecture precisely delineates and classifies Glioma, Meningioma, and Pituitary pathologies with interactive before/after split-screen comparison overlays.
+                            </p>
+                        </div>
+                        <div class="d-flex gap-2 align-items-center flex-wrap">
+                            <a href="{% url 'brain-tumor-predict' %}" class="btn-diagno btn-diagno-primary">
+                                <i data-lucide="scan" style="width: 16px; height: 16px;"></i>
+                                <span>Upload MRI Scan</span>
+                            </a>
+                            <span style="font-size: 0.8rem; color: var(--text-muted);">Interactive Slider Enabled</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2. Voice & Speech AI Triage (4-Col) -->
+            <div class="col-lg-4 col-md-6 diag-item" data-category="symptom">
+                <div class="disease-grid-card" style="border-color: rgba(6, 182, 212, 0.4);">
+                    <div class="disease-card-img-wrap">
+                        <img src="{% static 'front/kyd.png' %}" alt="Voice AI" onerror="this.src='https://images.unsplash.com/photo-1589254065878-42c9da997008?auto=format&fit=crop&w=600&q=80'">
+                        <span class="diagno-badge diagno-badge-cyan" style="position: absolute; top: 1rem; left: 1rem;">
+                            <i data-lucide="mic" style="width: 12px; height: 12px; display: inline;"></i> Live Audio API
+                        </span>
+                    </div>
+                    <div class="disease-card-body">
+                        <span class="diagno-badge diagno-badge-cyan mb-2">Natural Speech AI</span>
+                        <h4 style="font-weight: 800; color: var(--text-primary); margin-bottom: 0.5rem;">Know Your Disease</h4>
+                        <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1.5rem;">
+                            Speak symptoms in natural voice with real-time waveform oscillations or explore the interactive 3D anatomical body map.
+                        </p>
+                        <a href="{% url 'know-your-disease' %}" class="btn-diagno btn-diagno-primary mt-auto">
+                            <i data-lucide="mic" style="width: 16px; height: 16px;"></i>
+                            <span>Record Spoken Symptoms</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 3. Heart Disease (4-Col) -->
+            <div class="col-lg-4 col-md-6 diag-item" data-category="clinical">
+                <div class="disease-grid-card">
+                    <div class="disease-card-img-wrap">
+                        <img src="{% static 'front/heart disease.jpg' %}" alt="Cardiovascular" onerror="this.src='https://images.unsplash.com/photo-1628348068343-c6a848d2b6dd?auto=format&fit=crop&w=600&q=80'">
+                        <span class="diagno-badge diagno-badge-rose" style="position: absolute; top: 1rem; left: 1rem;">Live Risk Gauge</span>
+                    </div>
+                    <div class="disease-card-body">
+                        <span class="diagno-badge diagno-badge-rose mb-2">Cardiology</span>
+                        <h4 style="font-weight: 800; color: var(--text-primary); margin-bottom: 0.5rem;">Cardiovascular Risk Predictor</h4>
+                        <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1.5rem;">
+                            13-parameter hemodynamic analyzer evaluating resting ECG, thallium stress, blood pressure, and ST-segment depression.
+                        </p>
+                        <a href="{% url 'heart-disease-view' %}" class="btn-diagno btn-diagno-primary mt-auto">
+                            <i data-lucide="activity" style="width: 16px; height: 16px;"></i>
+                            <span>Enter Cardiac Vitals</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 4. Diabetes (4-Col) -->
+            <div class="col-lg-4 col-md-6 diag-item" data-category="clinical">
+                <div class="disease-grid-card">
+                    <div class="disease-card-img-wrap">
+                        <img src="{% static 'front/diabetes.jpg' %}" alt="Diabetes" onerror="this.src='https://images.unsplash.com/photo-1505751172876-fa1923c5c528?auto=format&fit=crop&w=600&q=80'">
+                        <span class="diagno-badge diagno-badge-blue" style="position: absolute; top: 1rem; left: 1rem;">Glycemic AI</span>
+                    </div>
+                    <div class="disease-card-body">
+                        <span class="diagno-badge diagno-badge-blue mb-2">Endocrinology</span>
+                        <h4 style="font-weight: 800; color: var(--text-primary); margin-bottom: 0.5rem;">Diabetes Stratification</h4>
+                        <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1.5rem;">
+                            Analyzes fasting plasma glucose, insulin levels, BMI, pedigree function, and age with dynamic pre-submission score gauge.
+                        </p>
+                        <a href="{% url 'diabetes-view' %}" class="btn-diagno btn-diagno-primary mt-auto">
+                            <i data-lucide="pie-chart" style="width: 16px; height: 16px;"></i>
+                            <span>Check Diabetes Risk</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 5. COVID & Chest X-Ray (4-Col) -->
+            <div class="col-lg-4 col-md-6 diag-item" data-category="vision">
+                <div class="disease-grid-card">
+                    <div class="disease-card-img-wrap">
+                        <img src="{% static 'front/covid.jpg' %}" alt="Chest X-Ray" onerror="this.src='https://images.unsplash.com/photo-1584515979956-d9f6e5d09982?auto=format&fit=crop&w=600&q=80'">
+                        <span class="diagno-badge diagno-badge-cyan" style="position: absolute; top: 1rem; left: 1rem;">Pulmonary Vision</span>
+                    </div>
+                    <div class="disease-card-body">
+                        <span class="diagno-badge diagno-badge-cyan mb-2">Pulmonology</span>
+                        <h4 style="font-weight: 800; color: var(--text-primary); margin-bottom: 0.5rem;">COVID-19 & Pneumonia</h4>
+                        <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1.5rem;">
+                            Rapid pulmonary screening on Chest X-Rays differentiating COVID-19, Viral Pneumonia, and normal lung radiograms.
+                        </p>
+                        <a href="{% url 'covid-predict' %}" class="btn-diagno btn-diagno-primary mt-auto">
+                            <i data-lucide="scan" style="width: 16px; height: 16px;"></i>
+                            <span>Analyze Chest X-Ray</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 6. Glaucoma (4-Col) -->
+            <div class="col-lg-4 col-md-6 diag-item" data-category="vision">
+                <div class="disease-grid-card">
+                    <div class="disease-card-img-wrap">
+                        <img src="{% static 'front/glaucoma.jpg' %}" alt="Glaucoma" onerror="this.src='https://images.unsplash.com/photo-1551601651-2a8555f1a136?auto=format&fit=crop&w=600&q=80'">
+                        <span class="diagno-badge diagno-badge-emerald" style="position: absolute; top: 1rem; left: 1rem;">Retina Vision</span>
+                    </div>
+                    <div class="disease-card-body">
+                        <span class="diagno-badge diagno-badge-emerald mb-2">Ophthalmology</span>
+                        <h4 style="font-weight: 800; color: var(--text-primary); margin-bottom: 0.5rem;">Glaucoma Screening</h4>
+                        <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1.5rem;">
+                            Detects optic disc cupping and nerve fiber defects on fundus eye photographs for early blindness prevention.
+                        </p>
+                        <a href="{% url 'glaucoma-predict' %}" class="btn-diagno btn-diagno-primary mt-auto">
+                            <i data-lucide="eye" style="width: 16px; height: 16px;"></i>
+                            <span>Upload Fundus Scan</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 7. Malaria (4-Col) -->
+            <div class="col-lg-4 col-md-6 diag-item" data-category="vision">
+                <div class="disease-grid-card">
+                    <div class="disease-card-img-wrap">
+                        <img src="{% static 'front/malaria.jpg' %}" alt="Malaria" onerror="this.src='https://images.unsplash.com/photo-1530497610245-94d3c16cda28?auto=format&fit=crop&w=600&q=80'">
+                        <span class="diagno-badge diagno-badge-rose" style="position: absolute; top: 1rem; left: 1rem;">Cellular Smear</span>
+                    </div>
+                    <div class="disease-card-body">
+                        <span class="diagno-badge diagno-badge-rose mb-2">Hematology</span>
+                        <h4 style="font-weight: 800; color: var(--text-primary); margin-bottom: 0.5rem;">Malaria Parasite Detection</h4>
+                        <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1.5rem;">
+                            Identifies Plasmodium parasitized red blood cells from microscopic thin blood film images in seconds.
+                        </p>
+                        <a href="{% url 'malaria-predict' %}" class="btn-diagno btn-diagno-primary mt-auto">
+                            <i data-lucide="droplet" style="width: 16px; height: 16px;"></i>
+                            <span>Check Blood Smear</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 8. Breast Cancer (4-Col) -->
+            <div class="col-lg-4 col-md-6 diag-item" data-category="clinical">
+                <div class="disease-grid-card">
+                    <div class="disease-card-img-wrap">
+                        <img src="{% static 'front/breast cancer.jpg' %}" alt="Oncology" onerror="this.src='https://images.unsplash.com/photo-1579154204601-01588f351e67?auto=format&fit=crop&w=600&q=80'">
+                        <span class="diagno-badge diagno-badge-rose" style="position: absolute; top: 1rem; left: 1rem;">Biopsy Classifier</span>
+                    </div>
+                    <div class="disease-card-body">
+                        <span class="diagno-badge diagno-badge-rose mb-2">Oncology</span>
+                        <h4 style="font-weight: 800; color: var(--text-primary); margin-bottom: 0.5rem;">Breast Cancer Diagnostic</h4>
+                        <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1.5rem;">
+                            Stratifies cellular fine-needle aspirate parameters into Malignant vs Benign clinical classifications.
+                        </p>
+                        <a href="{% url 'cancer-view' %}" class="btn-diagno btn-diagno-primary mt-auto">
+                            <i data-lucide="shield-alert" style="width: 16px; height: 16px;"></i>
+                            <span>Analyze Biopsy Metrics</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 9. Liver Disease (6-Col Bento) -->
+            <div class="col-lg-6 col-md-6 diag-item" data-category="clinical">
+                <div class="disease-grid-card">
+                    <div class="disease-card-img-wrap">
+                        <img src="{% static 'front/liver disease.jpg' %}" alt="Liver" onerror="this.src='https://images.unsplash.com/photo-1584362917165-526a968579e8?auto=format&fit=crop&w=600&q=80'">
+                        <span class="diagno-badge diagno-badge-amber" style="position: absolute; top: 1rem; left: 1rem;">Hepatic Panel</span>
+                    </div>
+                    <div class="disease-card-body">
+                        <span class="diagno-badge diagno-badge-amber mb-2">Gastroenterology</span>
+                        <h4 style="font-weight: 800; color: var(--text-primary); margin-bottom: 0.5rem;">Liver Function & Hepatic Health</h4>
+                        <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1.5rem;">
+                            Evaluates total bilirubin, enzymes (SGOT, SGPT), alkaline phosphatase, and protein ratios to assess chronic liver conditions.
+                        </p>
+                        <a href="{% url 'liver-view' %}" class="btn-diagno btn-diagno-primary mt-auto">
+                            <i data-lucide="layers" style="width: 16px; height: 16px;"></i>
+                            <span>Input Hepatic Panel</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 10. Alzheimer's (6-Col Bento) -->
+            <div class="col-lg-6 col-md-6 diag-item" data-category="vision">
+                <div class="disease-grid-card">
+                    <div class="disease-card-img-wrap">
+                        <img src="{% static 'front/alzheimers.jpg' %}" alt="Alzheimer MRI" onerror="this.src='https://images.unsplash.com/photo-1579684385127-1ef15d508118?auto=format&fit=crop&w=600&q=80'">
+                        <span class="diagno-badge diagno-badge-cyan" style="position: absolute; top: 1rem; left: 1rem;">Grad-CAM Heatmap</span>
+                    </div>
+                    <div class="disease-card-body">
+                        <span class="diagno-badge diagno-badge-cyan mb-2">Neurology</span>
+                        <h4 style="font-weight: 800; color: var(--text-primary); margin-bottom: 0.5rem;">Alzheimer's Multi-Stage MRI Analysis</h4>
+                        <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1.5rem;">
+                            Classifies Non, Very Mild, Mild, and Moderate Demented brain scans with visual Grad-CAM attention overlays and sample galleries.
+                        </p>
+                        <a href="{% url 'alzheimer-predict' %}" class="btn-diagno btn-diagno-primary mt-auto">
+                            <i data-lucide="scan" style="width: 16px; height: 16px;"></i>
+                            <span>Scan Brain MRI</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+
+<!-- ================= HOW IT WORKS TIMELINE ================= -->
+<section class="diagno-section" style="border-top: 1px solid var(--surface-glass-border); border-bottom: 1px solid var(--surface-glass-border);">
+    <div class="container">
+        <div class="section-header">
+            <div class="section-eyebrow">
+                <i data-lucide="zap" style="width: 14px; height: 14px;"></i>
+                <span>3-Step Automated Workflow</span>
+            </div>
+            <h2 class="section-title">How DiagnoAI Works</h2>
+            <p class="section-subtitle">Our frictionless diagnostic pipeline guides you from raw input to verified clinical guidance.</p>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="step-card">
+                    <div class="step-num-badge">01</div>
+                    <h4 style="font-weight: 800; margin-bottom: 0.75rem; color: var(--text-primary);">Input Scan or Vitals</h4>
+                    <p style="color: var(--text-secondary); font-size: 0.95rem; line-height: 1.6;">
+                        Upload standard DICOM/JPEG/PNG medical imaging (MRI, X-ray, Retina, Smear) or provide routine biometric lab values.
+                    </p>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="step-card">
+                    <div class="step-num-badge" style="background: linear-gradient(135deg, var(--primary-500), var(--primary-600));">02</div>
+                    <h4 style="font-weight: 800; margin-bottom: 0.75rem; color: var(--text-primary);">Neural Inference & Heatmap</h4>
+                    <p style="color: var(--text-secondary); font-size: 0.95rem; line-height: 1.6;">
+                        Trained deep convolutional networks process your data in &lt;2 seconds, generating pixel masks and Grad-CAM explainability heatmaps.
+                    </p>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="step-card">
+                    <div class="step-num-badge" style="background: linear-gradient(135deg, var(--primary-600), var(--primary-700));">03</div>
+                    <h4 style="font-weight: 800; margin-bottom: 0.75rem; color: var(--text-primary);">Clinical Report & Telehealth</h4>
+                    <p style="color: var(--text-secondary); font-size: 0.95rem; line-height: 1.6;">
+                        Receive actionable health stratification reports, precaution guidelines, and 1-click video consultations with verified specialists.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ================= TELEHEALTH CONSULTATION BANNER ================= -->
+<section class="diagno-section">
+    <div class="container">
+        <div class="telehealth-banner">
+            <div class="row align-items-center g-4 position-relative" style="z-index: 1;">
+                <div class="col-lg-8">
+                    <span class="diagno-badge diagno-badge-blue mb-3">Live Telemedicine</span>
+                    <h2 style="font-size: clamp(2rem, 3.5vw, 2.75rem); font-weight: 800; margin-bottom: 1rem; color: white;">
+                        Need Clinical Verification? Connect with a Specialist
+                    </h2>
+                    <p style="color: #cbd5e1; font-size: 1.05rem; line-height: 1.7; max-width: 650px; margin-bottom: 2rem;">
+                        Our certified physicians, radiologists, and cardiologists are ready to review your AI diagnostic scans via secure encrypted HD video consultations.
+                    </p>
+                    <div class="d-flex flex-wrap gap-3">
+                        <a href="{% url 'appointment' %}" class="btn-diagno btn-diagno-primary btn-diagno-lg">
+                            <i data-lucide="video" style="width: 20px; height: 20px;"></i>
+                            <span>Schedule Video Appointment</span>
+                        </a>
+                        <a href="{% url 'login' %}" class="btn-diagno btn-diagno-outline btn-diagno-lg" style="background: rgba(255,255,255,0.1); color: white; border-color: rgba(255,255,255,0.25);">
+                            <i data-lucide="user" style="width: 20px; height: 20px;"></i>
+                            <span>Doctor Portal Login</span>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="col-lg-4 text-center">
+                    <div style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); backdrop-filter: blur(16px); border-radius: var(--radius-xl); padding: 2rem; display: inline-block;">
+                        <i data-lucide="shield-check" style="width: 56px; height: 56px; color: var(--cyan-400); margin-bottom: 1rem;"></i>
+                        <h5 style="color: white; font-weight: 800; margin-bottom: 0.5rem;">HIPAA Compliant & Secure</h5>
+                        <p style="font-size: 0.85rem; color: #94a3b8; margin: 0;">End-to-end encrypted video and patient medical records.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ================= QUICK SCREENER MODAL ================= -->
+<div class="modal fade" id="quickScreenModal" tabindex="-1" aria-labelledby="quickScreenModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content modal-glass" style="box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);">
+            <div class="modal-header border-0 pb-0">
+                <div>
+                    <span class="diagno-badge diagno-badge-purple mb-1">Live REST API Powered</span>
+                    <h4 class="modal-title font-weight-bold" id="quickScreenModalLabel" style="font-weight: 800; color: var(--text-primary);">
+                        ⚡ Instant Clinical Screener
+                    </h4>
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <div class="modal-body pt-3">
+                <!-- Modality Tabs -->
+                <div class="d-flex gap-2 mb-4 p-1 bg-light rounded-3 flex-wrap">
+                    <button class="quick-tab-btn active" id="tabHeartBtn" onclick="switchQuickTab('heart')">
+                        🫀 Heart Disease
+                    </button>
+                    <button class="quick-tab-btn" id="tabDiabBtn" onclick="switchQuickTab('diabetes')">
+                        🩸 Diabetes Mellitus
+                    </button>
+                    <button class="quick-tab-btn" id="tabLiverBtn" onclick="switchQuickTab('liver')">
+                        🩺 Liver Panel
+                    </button>
+                </div>
+
+                <!-- Heart Form -->
+                <form id="quickHeartForm" onsubmit="event.preventDefault(); submitQuickScreen('heart');">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <span style="font-size: 0.85rem; font-weight: 700; color: var(--text-muted);">Cardiovascular Parameters:</span>
+                        <div class="d-flex gap-2">
+                            <button type="button" class="btn btn-sm btn-outline-secondary" onclick="presetQuickHeart(0)">Load Normal</button>
+                            <button type="button" class="btn btn-sm btn-outline-danger" onclick="presetQuickHeart(1)">Load Elevated Risk</button>
+                        </div>
+                    </div>
+                    <div class="row g-2">
+                        <div class="col-4">
+                            <label class="diagno-label">Age</label>
+                            <input type="number" id="qh_age" class="diagno-input" value="52" required>
+                        </div>
+                        <div class="col-4">
+                            <label class="diagno-label">Sex</label>
+                            <select id="qh_sex" class="diagno-select">
+                                <option value="1">Male</option>
+                                <option value="0">Female</option>
+                            </select>
+                        </div>
+                        <div class="col-4">
+                            <label class="diagno-label">Chest Pain (0-3)</label>
+                            <select id="qh_cp" class="diagno-select">
+                                <option value="0">0: Typical</option>
+                                <option value="1">1: Atypical</option>
+                                <option value="2">2: Non-anginal</option>
+                                <option value="3">3: Asymptomatic</option>
+                            </select>
+                        </div>
+                        <div class="col-4">
+                            <label class="diagno-label">Resting BP (mm Hg)</label>
+                            <input type="number" id="qh_bp" class="diagno-input" value="125" required>
+                        </div>
+                        <div class="col-4">
+                            <label class="diagno-label">Cholesterol (mg/dl)</label>
+                            <input type="number" id="qh_chol" class="diagno-input" value="212" required>
+                        </div>
+                        <div class="col-4">
+                            <label class="diagno-label">Max HR (bpm)</label>
+                            <input type="number" id="qh_hr" class="diagno-input" value="168" required>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn-diagno btn-diagno-primary w-100 mt-4" id="qh_submitBtn">
+                        <span>Run Cardiovascular Assessment</span>
+                    </button>
+                </form>
+
+                <!-- Diabetes Form -->
+                <form id="quickDiabForm" style="display: none;" onsubmit="event.preventDefault(); submitQuickScreen('diabetes');">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <span style="font-size: 0.85rem; font-weight: 700; color: var(--text-muted);">Metabolic Parameters:</span>
+                        <div class="d-flex gap-2">
+                            <button type="button" class="btn btn-sm btn-outline-secondary" onclick="presetQuickDiab(0)">Load Normal</button>
+                            <button type="button" class="btn btn-sm btn-outline-danger" onclick="presetQuickDiab(1)">Load Elevated Risk</button>
+                        </div>
+                    </div>
+                    <div class="row g-2">
+                        <div class="col-4">
+                            <label class="diagno-label">Pregnancies</label>
+                            <input type="number" id="qd_preg" class="diagno-input" value="2" required>
+                        </div>
+                        <div class="col-4">
+                            <label class="diagno-label">Glucose (mg/dl)</label>
+                            <input type="number" id="qd_gluc" class="diagno-input" value="115" required>
+                        </div>
+                        <div class="col-4">
+                            <label class="diagno-label">Blood Pressure</label>
+                            <input type="number" id="qd_bp" class="diagno-input" value="70" required>
+                        </div>
+                        <div class="col-4">
+                            <label class="diagno-label">Insulin (μU/ml)</label>
+                            <input type="number" id="qd_ins" class="diagno-input" value="85" required>
+                        </div>
+                        <div class="col-4">
+                            <label class="diagno-label">BMI (kg/m²)</label>
+                            <input type="number" step="0.1" id="qd_bmi" class="diagno-input" value="24.5" required>
+                        </div>
+                        <div class="col-4">
+                            <label class="diagno-label">Age</label>
+                            <input type="number" id="qd_age" class="diagno-input" value="34" required>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn-diagno btn-diagno-primary w-100 mt-4" id="qd_submitBtn">
+                        <span>Run Diabetes Assessment</span>
+                    </button>
+                </form>
+
+                <!-- Liver Form -->
+                <form id="quickLiverForm" style="display: none;" onsubmit="event.preventDefault(); submitQuickScreen('liver');">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <span style="font-size: 0.85rem; font-weight: 700; color: var(--text-muted);">Hepatic Panel:</span>
+                        <div class="d-flex gap-2">
+                            <button type="button" class="btn btn-sm btn-outline-secondary" onclick="presetQuickLiver(0)">Load Normal</button>
+                            <button type="button" class="btn btn-sm btn-outline-danger" onclick="presetQuickLiver(1)">Load Elevated Risk</button>
+                        </div>
+                    </div>
+                    <div class="row g-2">
+                        <div class="col-4">
+                            <label class="diagno-label">Age</label>
+                            <input type="number" id="ql_age" class="diagno-input" value="45" required>
+                        </div>
+                        <div class="col-4">
+                            <label class="diagno-label">Total Bilirubin</label>
+                            <input type="number" step="0.1" id="ql_tb" class="diagno-input" value="0.8" required>
+                        </div>
+                        <div class="col-4">
+                            <label class="diagno-label">Direct Bilirubin</label>
+                            <input type="number" step="0.1" id="ql_db" class="diagno-input" value="0.2" required>
+                        </div>
+                        <div class="col-4">
+                            <label class="diagno-label">Alk. Phosphatase</label>
+                            <input type="number" id="ql_aap" class="diagno-input" value="180" required>
+                        </div>
+                        <div class="col-4">
+                            <label class="diagno-label">SGOT (AST)</label>
+                            <input type="number" id="ql_sgot" class="diagno-input" value="22" required>
+                        </div>
+                        <div class="col-4">
+                            <label class="diagno-label">SGPT (ALT)</label>
+                            <input type="number" id="ql_sgpt" class="diagno-input" value="25" required>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn-diagno btn-diagno-primary w-100 mt-4" id="ql_submitBtn">
+                        <span>Run Liver Assessment</span>
+                    </button>
+                </form>
+
+                <!-- Live Results Container -->
+                <div id="quickResultCard" class="mt-4 p-3 rounded-3" style="display: none; border: 1px solid var(--surface-glass-border); background: var(--bg-main);">
+                    <div class="d-flex align-items-center justify-content-between mb-2">
+                        <span id="quickRiskBadge" class="diagno-badge diagno-badge-emerald">Low Risk</span>
+                        <span id="quickConfBadge" class="diagno-badge diagno-badge-purple">Confidence: 92.5%</span>
+                    </div>
+                    <h5 id="quickDiagnosisTitle" style="font-weight: 800; color: var(--text-primary); margin-bottom: 0.5rem;">Diagnosis Title</h5>
+                    <ul id="quickRecList" style="font-size: 0.88rem; color: var(--text-secondary); margin-bottom: 1rem; padding-left: 1.2rem;"></ul>
+                    <div class="d-flex gap-2">
+                        <a href="{% url 'appointment' %}" class="btn-diagno btn-diagno-primary btn-sm flex-grow-1">
+                            <i data-lucide="video" style="width: 14px; height: 14px;"></i>
+                            <span>Schedule Specialist Consultation</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    function filterGrid(category, btn) {
+        document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+        btn.classList.add('active');
+
+        const items = document.querySelectorAll('.diag-item');
+        items.forEach(item => {
+            if (category === 'all' || item.getAttribute('data-category') === category) {
+                item.style.display = 'block';
+                item.style.animation = 'fadeIn 0.3s ease';
+            } else {
+                item.style.display = 'none';
+            }
+        });
+    }
+
+    // Ping AI Core Health
+    function pingAIHealth() {
+        const pingIcon = document.getElementById('pingIcon');
+        const statusEl = document.getElementById('telemetryStatus');
+        const latencyEl = document.getElementById('telemetryLatency');
+        if (pingIcon) pingIcon.style.animation = 'spin 1s linear infinite';
+
+        const t0 = performance.now();
+        fetch('/api/v1/health/')
+            .then(res => res.json())
+            .then(data => {
+                const t1 = performance.now();
+                if (statusEl) statusEl.textContent = 'Operational 🟢';
+                if (latencyEl) latencyEl.textContent = `${Math.round(t1 - t0)}ms`;
+                if (pingIcon) pingIcon.style.animation = 'none';
+                if (window.DiagnoToast) DiagnoToast.success(`AI Core Online (${data.modalities.length} Active Modalities)`, 'Telemetry Health');
+            })
+            .catch(() => {
+                if (statusEl) statusEl.textContent = 'Degraded 🟡';
+                if (pingIcon) pingIcon.style.animation = 'none';
+            });
+    }
+
+    // Quick Tab Switcher
+    function switchQuickTab(tab) {
+        document.getElementById('tabHeartBtn').classList.toggle('active', tab === 'heart');
+        document.getElementById('tabDiabBtn').classList.toggle('active', tab === 'diabetes');
+        document.getElementById('tabLiverBtn').classList.toggle('active', tab === 'liver');
+
+        document.getElementById('quickHeartForm').style.display = tab === 'heart' ? 'block' : 'none';
+        document.getElementById('quickDiabForm').style.display = tab === 'diabetes' ? 'block' : 'none';
+        document.getElementById('quickLiverForm').style.display = tab === 'liver' ? 'block' : 'none';
+        document.getElementById('quickResultCard').style.display = 'none';
+    }
+
+    // Presets
+    function presetQuickHeart(level) {
+        document.getElementById('qh_age').value = level ? 63 : 42;
+        document.getElementById('qh_bp').value = level ? 155 : 118;
+        document.getElementById('qh_chol').value = level ? 275 : 185;
+        document.getElementById('qh_hr').value = level ? 122 : 165;
+    }
+
+    function presetQuickDiab(level) {
+        document.getElementById('qd_gluc').value = level ? 178 : 95;
+        document.getElementById('qd_bmi').value = level ? 34.2 : 22.4;
+        document.getElementById('qd_ins').value = level ? 210 : 65;
+    }
+
+    function presetQuickLiver(level) {
+        document.getElementById('ql_tb').value = level ? 3.4 : 0.8;
+        document.getElementById('ql_sgot').value = level ? 85 : 22;
+        document.getElementById('ql_sgpt').value = level ? 94 : 25;
+    }
+
+    // Submit Quick Screen
+    function submitQuickScreen(modality) {
+        let endpoint = '';
+        let payload = {};
+
+        if (modality === 'heart') {
+            endpoint = '/api/v1/heart/';
+            payload = {
+                age: parseFloat(document.getElementById('qh_age').value),
+                sex: parseFloat(document.getElementById('qh_sex').value),
+                cp: parseFloat(document.getElementById('qh_cp').value),
+                trestbps: parseFloat(document.getElementById('qh_bp').value),
+                chol: parseFloat(document.getElementById('qh_chol').value),
+                fbs: 0,
+                restecg: 1,
+                thalach: parseFloat(document.getElementById('qh_hr').value),
+                exang: 0,
+                oldpeak: 1.0,
+                slope: 2
+            };
+        } else if (modality === 'diabetes') {
+            endpoint = '/api/v1/diabetes/';
+            payload = {
+                pregnancies: parseFloat(document.getElementById('qd_preg').value),
+                glucose: parseFloat(document.getElementById('qd_gluc').value),
+                blood_pressure: parseFloat(document.getElementById('qd_bp').value),
+                skin_thickness: 30,
+                insulin: parseFloat(document.getElementById('qd_ins').value),
+                bmi: parseFloat(document.getElementById('qd_bmi').value),
+                pedigree: 0.35,
+                age: parseFloat(document.getElementById('qd_age').value)
+            };
+        } else if (modality === 'liver') {
+            endpoint = '/api/v1/liver/';
+            payload = {
+                age: parseFloat(document.getElementById('ql_age').value),
+                gender: 1,
+                total_bilirubin: parseFloat(document.getElementById('ql_tb').value),
+                direct_bilirubin: parseFloat(document.getElementById('ql_db').value),
+                alkaline_phosphatase: parseFloat(document.getElementById('ql_aap').value),
+                alamine_aminotransferase: parseFloat(document.getElementById('ql_sgpt').value),
+                aspartate_aminotransferase: parseFloat(document.getElementById('ql_sgot').value),
+                total_proteins: 6.8,
+                albumin: 3.3,
+                albumin_globulin_ratio: 0.9
+            };
+        }
+
+        fetch(endpoint, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        })
+        .then(res => res.json())
+        .then(data => {
+            const card = document.getElementById('quickResultCard');
+            card.style.display = 'block';
+
+            const riskBadge = document.getElementById('quickRiskBadge');
+            const confBadge = document.getElementById('quickConfBadge');
+            const title = document.getElementById('quickDiagnosisTitle');
+            const recList = document.getElementById('quickRecList');
+
+            riskBadge.textContent = `${data.risk_level} Risk`;
+            riskBadge.className = data.risk_level === 'Elevated' || data.risk_level === 'High' ? 'diagno-badge diagno-badge-rose' : 'diagno-badge diagno-badge-emerald';
+
+            confBadge.textContent = `Confidence: ${data.confidence}%`;
+            title.textContent = data.diagnosis;
+
+            recList.innerHTML = (data.recommendations || []).map(r => `<li>${r}</li>`).join('');
+            if (window.lucide) lucide.createIcons();
+            if (window.DiagnoToast) DiagnoToast.info(`Assessment: ${data.diagnosis}`, 'Instant Analysis');
+        })
+        .catch(err => {
+            console.error(err);
+            if (window.DiagnoToast) DiagnoToast.error('Failed to complete quick assessment.', 'Error');
+        });
+    }
+
+    // ═══ Hero Triage Sandbox ═══
+    function toggleTriageChip(btn) {
+        const isActive = btn.getAttribute('data-active') === '1';
+        if (isActive) {
+            btn.setAttribute('data-active', '0');
+            btn.style.background = 'var(--bg-main)';
+            btn.style.color = 'var(--text-secondary)';
+            btn.style.borderColor = 'var(--surface-glass-border)';
+        } else {
+            btn.setAttribute('data-active', '1');
+            btn.style.background = 'var(--primary-600)';
+            btn.style.color = 'white';
+            btn.style.borderColor = 'var(--primary-600)';
+        }
+        const selected = document.querySelectorAll('.triage-chip[data-active="1"]');
+        const count = selected.length;
+        const countEl = document.getElementById('triageSelectionCount');
+        const runBtn = document.getElementById('triageRunBtn');
+        const btnText = document.getElementById('triageBtnText');
+        if (countEl) countEl.textContent = `${count} symptom${count !== 1 ? 's' : ''} selected`;
+        if (runBtn) runBtn.disabled = count === 0;
+        if (btnText) btnText.textContent = count > 0 ? `Run Instant Triage (${count})` : 'Select Symptoms First';
+        // Hide previous result when selection changes
+        const resBadge = document.getElementById('triageResultBadge');
+        if (resBadge) resBadge.style.display = 'none';
+    }
+
+    function clearTriageChips() {
+        document.querySelectorAll('.triage-chip').forEach(btn => {
+            btn.setAttribute('data-active', '0');
+            btn.style.background = 'var(--bg-main)';
+            btn.style.color = 'var(--text-secondary)';
+            btn.style.borderColor = 'var(--surface-glass-border)';
+        });
+        const countEl = document.getElementById('triageSelectionCount');
+        const runBtn = document.getElementById('triageRunBtn');
+        const btnText = document.getElementById('triageBtnText');
+        if (countEl) countEl.textContent = '0 symptoms selected';
+        if (runBtn) runBtn.disabled = true;
+        if (btnText) btnText.textContent = 'Select Symptoms First';
+        const resBadge = document.getElementById('triageResultBadge');
+        if (resBadge) resBadge.style.display = 'none';
+    }
+
+    function runHeroTriage() {
+        const selected = Array.from(document.querySelectorAll('.triage-chip[data-active="1"]')).map(b => b.getAttribute('data-sym'));
+        if (!selected.length) return;
+
+        const btnText = document.getElementById('triageBtnText');
+        if (btnText) btnText.textContent = 'Analyzing...';
+
+        // Build form data for the know-your-disease endpoint
+        const fd = new FormData();
+        fd.append('symptoms', selected.join(','));
+        fd.append('csrfmiddlewaretoken', (document.cookie.match(/csrftoken=([^;]+)/) || [])[1] || '');
+
+        fetch('/know-your-disease/', {
+            method: 'POST',
+            body: fd,
+            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (btnText) btnText.textContent = `Run Instant Triage (${selected.length})`;
+            const resBadge = document.getElementById('triageResultBadge');
+            const topDisease = document.getElementById('triageTopDisease');
+            const confEl = document.getElementById('triageConfidence');
+            const fullLink = document.getElementById('triageFullLink');
+            if (resBadge) resBadge.style.display = 'block';
+
+            let topName = null;
+            let topProb = null;
+
+            if (data.output && Object.keys(data.output).length > 0) {
+                const firstKey = Object.keys(data.output)[0];
+                topName = firstKey;
+                topProb = data.output[firstKey].probability;
+            } else if (data.results && Object.keys(data.results).length > 0) {
+                const firstKey = Object.keys(data.results)[0];
+                topName = firstKey;
+                topProb = data.results[firstKey].probability;
+            } else if (data.predictions && data.predictions.length > 0) {
+                topName = data.predictions[0].disease || data.predictions[0].name;
+                topProb = data.predictions[0].probability;
+            }
+
+            if (topName && topDisease) {
+                topDisease.textContent = '🩺 ' + topName;
+                if (confEl) confEl.textContent = topProb !== undefined ? `${topProb}% likelihood` : 'High confidence';
+                if (window.DiagnoToast) DiagnoToast.info(`Top match: ${topName}`, 'Hero Triage');
+            } else if (topDisease) {
+                topDisease.textContent = 'No match found';
+                if (confEl) confEl.textContent = '';
+            }
+
+            if (fullLink) {
+                fullLink.href = '/know-your-disease/?symptoms=' + encodeURIComponent(selected.join(','));
+            }
+        })
+        .catch(err => {
+            console.error(err);
+            if (btnText) btnText.textContent = `Run Instant Triage (${selected.length})`;
+            // Fallback: redirect to full form with symptoms pre-filled
+            window.location.href = '/know-your-disease/?symptoms=' + encodeURIComponent(selected.join(','));
+        });
+    }
+
+
+    // Ping health on startup
+    document.addEventListener('DOMContentLoaded', () => {
+        pingAIHealth();
+    });
+
+</script>
+{% endblock %}

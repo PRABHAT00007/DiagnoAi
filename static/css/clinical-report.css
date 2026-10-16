@@ -1,0 +1,96 @@
+/**
+ * DiagnoAI Clinical Summary Print & PDF Stylesheet
+ * Optimizes diagnostic results for clean, professional clinical report printing.
+ */
+
+@media print {
+    /* Hide non-printable UI elements */
+    header,
+    footer,
+    .diagno-navbar,
+    .diagno-footer,
+    .btn-diagno,
+    .diagno-dropzone,
+    .hero-glow-1,
+    .hero-glow-2,
+    #diagno-toast-container,
+    .slot-pill-group,
+    #diagnoSoundToggle,
+    #diagnoThemeToggle,
+    .no-print {
+        display: none !important;
+    }
+
+    body {
+        background: white !important;
+        color: #0f172a !important;
+        font-size: 11pt !important;
+        line-height: 1.4 !important;
+        margin: 0 !important;
+        padding: 20px !important;
+    }
+
+    .vision-container,
+    .clinical-container,
+    .recorder-container,
+    .telehealth-container {
+        max-width: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+
+    .print-report-header {
+        display: block !important;
+        border-bottom: 2px solid #0284c7;
+        padding-bottom: 12px;
+        margin-bottom: 20px;
+    }
+
+    .print-report-header h2 {
+        color: #0284c7 !important;
+        font-weight: 800;
+        margin: 0 0 4px 0;
+    }
+
+    .print-report-header .report-meta {
+        font-size: 9pt;
+        color: #64748b;
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .scan-display-card,
+    .diagno-card,
+    .clinical-output-card {
+        box-shadow: none !important;
+        border: 1px solid #cbd5e1 !important;
+        break-inside: avoid;
+        margin-bottom: 15px !important;
+        padding: 15px !important;
+        border-radius: 8px !important;
+    }
+
+    .preview-box {
+        background: #f8fafc !important;
+        min-height: auto !important;
+    }
+
+    .preview-box img {
+        max-height: 250px !important;
+    }
+
+    .print-disclaimer {
+        display: block !important;
+        font-size: 8pt;
+        color: #64748b;
+        margin-top: 25px;
+        border-top: 1px solid #e2e8f0;
+        padding-top: 10px;
+        text-align: center;
+    }
+}
+
+.print-report-header,
+.print-disclaimer {
+    display: none;
+}
